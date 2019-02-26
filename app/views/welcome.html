@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Welcome Page</title>
+
+  <link rel="stylesheet" href="<?php res('/lib/bootstrap/css/bootstrap.min.css'); ?>">
+  <link rel="stylesheet" href="<?php res('/css/style.css'); ?>">
+</head>
+<body>
+
+  <div class="container">
+    <div class="row justify-content-md-center">
+      <div class="col-md-auto">
+        <h3 class="fphp_title" >Welcome To FastPHP :)</h3>
+      </div>
+    </div>
+
+    <div style="text-align: center;margin-top: 25px;">
+      <div style="color: #43e5ed;">
+        version : <?php echo app\VER; ?>
+      </div>
+      <div style="margin-top: 10px;">
+        <button type="button" class="btn btn-light" onclick="window.location.href='https://github.com/parsgit/fastphp'" name="button">Github</button>
+        <button type="button" class="btn btn-success" onclick="window.location.href='https://github.com/parsgit/fastphp/wiki'" name="button">Document</button>
+        <button type="button" class="btn btn-primary" onclick="window.location.href='<?php echo url('/code') ?>'" name="button">Sample</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="<?php res('/lib/jquery/jquery-3.3.1.min.js'); ?>" ></script>
+  <script src="<?php res('/lib/bootstrap/js/bootstrap.min.js'); ?>"></script>
+</body>
+</html>
