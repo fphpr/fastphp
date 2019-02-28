@@ -105,7 +105,18 @@ function error($error=null,$byCode=null,$type=null){
 function get($name='',$def=''){if (isset($_GET[$name])){return htmlspecialchars($_GET[$name]);}else{return $def;}}
 function post($name='',$def=''){if (isset($_POST[$name])){return($_POST[$name]);}else{return $def;}}
 
-function LoadModel($name=''){include_once __DIR__."/../app/models/$name.php";}
+function LoadModel($name='')
+{
+  if (is_array($name)) {
+    foreach ($name as $key => $value) {
+      include_once __DIR__."/../app/models/$value.php";
+    }
+  }
+  else {
+    include_once __DIR__."/../app/models/$name.php";
+  }
+}
+
 function LoadView($name=''){
   if( include_file( __DIR__."/../app/views/$name.html")==false){
     error(null,404,'view|app/views/'.$name.".html");
