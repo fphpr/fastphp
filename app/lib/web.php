@@ -276,3 +276,47 @@ class Address
     return $ip;
   }
 }
+
+/**
+ *
+ */
+class Request
+{
+
+  /**
+  *
+  * @param string $url
+  * @param array $params
+  * @param string $use_curl
+  * @param string $post
+  * @return string request text
+  */
+  public static function api($url,$params=[],$post=false){
+
+    if (! $post){
+      $url.="?";
+      foreach ($params as $key=>$value){
+        $url.="$key=$value&";
+      }
+    }
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $url);
+
+    if (! $post){
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+    }
+    else{
+      curl_setopt($ch, CURLOPT_POST,1);
+    }
+    // curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false); // required as of PHP 5.6.0
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $result=curl_exec($ch);
+    curl_close($ch);
+    return $result;
+
+  }
+}
