@@ -143,7 +143,14 @@ function include_file($file){
 
 function Redirect($url='',$die=true){header("Location: $url");if($die)die();}
 function GenerateToken($len=16){return bin2hex(openssl_random_pseudo_bytes($len));}
-function ReturnData($data){if(is_array($data)){$data=json_encode($data);}echo$data;}
+function ReturnData($data){
+  if(is_array($data))
+  {
+    header('Content-Type: application/json ; charset=utf-8 ');
+    $data=json_encode($data);
+  }
+  echo $data;
+}
 function view($view,$params=null){if($params!=null){$GLOBALS['val']=$params;}LoadView($view);}
 
 function echoVal($name=''){
