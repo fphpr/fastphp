@@ -72,7 +72,7 @@ class Auth
     }
     $id=Auth::getId();
     if($id==false){return false;}
-    return \DB::getOne("select * from $table where id=?",[$id]);
+    return DB::getOne("select * from $table where id=?",[$id]);
   }
   public static function justLogin($url='')
   {
