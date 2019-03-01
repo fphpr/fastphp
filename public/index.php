@@ -269,6 +269,40 @@ function res($value='/',$return=false)
     echo url('/public'.$value,true);;
   }
 }
+
+function setLang($lang='en')
+{
+  define('LANGLOCAL',$lang);
+}
+function lang($label='',$autoEcho=true)
+{
+  $local=LANGLOCAL;
+  if($local==null){$local='en';}
+
+  $label=explode('.',$label);
+
+  $path= __DIR__."/../app/other/lang/$local/".$label[0].".php";
+  $lang_array=(isset($GLOBALS['lang'][$label[0]])?$GLOBALS['lang'][$label[0]]:null) ;
+  if($lang_array==null && file_exists($path)){
+    include_once $path;
+    $GLOBALS['lang'][$label[0]]=$lang_array;
+  }
+  else if($lang_array==null) {
+    error(null,500,'lang|'."/app/other/lang/$local/".$label[0].".php");
+  }
+
+  if ($autoEcho) {
+    echo  $lang_array[$label[1]];
+  }
+  else {
+    return  $lang_array[$label[1]];
+  }
+
+}
+function rlang($label)
+{
+  return lang($label,false);
+}
 if(RUN_TIME && ECHO_RUN_TIME){
   echo "<br><br> Time : ".(microtime(true)-$time_start)."<br>";
 }

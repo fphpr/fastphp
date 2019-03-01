@@ -53,6 +53,11 @@ class FDebug{
           FDebug::code(404);
           break;
 
+          case 'lang':
+          FDebug::echo_error("<br>file not found path : $addText","Language file not found ",500);
+          FDebug::code(404);
+          break;
+
         default:
         FDebug::code(500);
         break;
@@ -71,6 +76,12 @@ class FDebug{
       FDebug::code(500);
       FDebug::error_msg($type[0],$type[1]);
       break;
+
+      case 'lang':
+      FDebug::code(500);
+      FDebug::error_msg($type[0],$type[1]);
+      break;
+
 
       default:
           FDebug::code(500);
@@ -91,9 +102,9 @@ class FDebug{
 
     $getR=UrlParams();
     $cname=$getR[0];
-    $cfunc='Action';
+    $cfunc='';
     if (count($getR)>1) {
-      $cfunc.=$getR[1];
+      $cfunc.=$getR[1].'Action';
     }
 
     $errorText='';
