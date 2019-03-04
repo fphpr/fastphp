@@ -44,7 +44,7 @@ if(RUN_TIME){define("TIME_START", microtime(true));}
 CONST INDEX='index';
 
 try{
-  //error_reporting(0);
+  error_reporting(0);
 
   $getR=UrlParams();
   if($getR[0]==INDEX && count($getR)==1){$getR[]='';}
