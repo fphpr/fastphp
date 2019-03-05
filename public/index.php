@@ -57,7 +57,7 @@ try{
       include_once  __DIR__."/../app/$name.php";
     }
     elseif ($arr[0]=='App') {
-      include_once __DIR__."/../app/lib/web.php";
+      include_once __DIR__."/../app/Lib/web.php";
     }
     elseif ($arr[0]=='package') {
       include_once  __DIR__."/../app/Other/$name.php";
@@ -68,7 +68,7 @@ try{
   });
 
   if($RUN_CONFIG_CORE){
-    include_once __DIR__."/../app/config/core.php";
+    include_once __DIR__."/../app/Config/core.php";
     $core= new fastphp\core;
     $core->start();
   }
@@ -128,23 +128,23 @@ function LoadController($name='',$check=false){
 }
 function LoadLibs($name='*'){
   if($name=='*'){
-    $dir = __DIR__."/../app/lib/$name";
+    $dir = __DIR__."/../app/Lib/$name";
     foreach(glob($dir) as $file){
       echo basename($file)."  <br>";
       if(!is_dir($file))
       {
-        include_once(__DIR__."/../app/lib/". basename($file));
+        include_once(__DIR__."/../app/Lib/". basename($file));
       }
     }
   }
   else {
     if (is_array($name)) {
       foreach ($name as $key => $libName) {
-        include_once(__DIR__."/../app/lib/$libName.php");
+        include_once(__DIR__."/../app/Lib/$libName.php");
       }
     }
     else {
-      include_once(__DIR__."/../app/lib/$name.php");
+      include_once(__DIR__."/../app/Lib/$name.php");
     }
   }
 
