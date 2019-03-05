@@ -13,7 +13,7 @@ CONST DEBUG=true;
 
 /*
 * Write Error Log file
-* view on  other/logs/error.txt
+* view on  Other/logs/error.txt
 */
 CONST DEBUG_FILE_LOG=true;
 /*
@@ -52,6 +52,7 @@ try{
   // auto load files
   spl_autoload_register(function($name){
     $arr=explode('\\',$name);
+    $name=str_replace('\\','/',$name);
     if ( $arr[0]=='Models' || $arr[0]=='Controllers') {
       include_once  __DIR__."/../app/$name.php";
     }
@@ -59,7 +60,7 @@ try{
       include_once __DIR__."/../app/lib/web.php";
     }
     elseif ($arr[0]=='package') {
-      include_once  __DIR__."/../app/other/$name.php";
+      include_once  __DIR__."/../app/Other/$name.php";
     }
     else  {
       include_once __DIR__."/../vendor/autoload.php";
@@ -73,7 +74,7 @@ try{
   }
 
   if(LoadController($getR[0])){
-    $controller=new $getR[0]([]);
+    $controller=new $getR[0];
     ReturnData($controller->{$getR[1]."Action"}());
   }
 
@@ -112,14 +113,14 @@ function post($name='',$def=''){if (isset($_POST[$name])){return($_POST[$name]);
 
 
 function LoadView($name=''){
-  if( include_file( __DIR__."/../app/views/$name.html")==false){
-    error(null,404,'view|app/views/'.$name.".html");
+  if( include_file( __DIR__."/../app/Views/$name.html")==false){
+    error(null,404,'view|app/Views/'.$name.".html");
     return false;
   }
   return true;
 }
 function LoadController($name='',$check=false){
-  if( include_file( __DIR__."/../app/controllers/".$name.".php")==false){
+  if( include_file( __DIR__."/../app/Controllers/".$name.".php")==false){
     error(null,404,'controller|'.$name.".php");
     return false;
   }
@@ -279,14 +280,14 @@ function lang($label='',$autoEcho=true)
 
   $label=explode('.',$label);
 
-  $path= __DIR__."/../app/other/lang/$local/".$label[0].".php";
+  $path= __DIR__."/../app/Other/lang/$local/".$label[0].".php";
   $lang_array=(isset($GLOBALS['lang'][$label[0]])?$GLOBALS['lang'][$label[0]]:null) ;
   if($lang_array==null && file_exists($path)){
     include_once $path;
     $GLOBALS['lang'][$label[0]]=$lang_array;
   }
   else if($lang_array==null) {
-    error(null,500,'lang|'."/app/other/lang/$local/".$label[0].".php");
+    error(null,500,'lang|'."/app/Other/lang/$local/".$label[0].".php");
   }
 
   if ($autoEcho) {

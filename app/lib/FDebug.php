@@ -1,5 +1,4 @@
 <?php
-//namespace App;
 use App\File;
 use App\Address;
 
@@ -13,8 +12,10 @@ class FDebug{
       FDebug::$error=$error;
     }
 
-    if(FDebug::check_isexistFunction())
-    FDebug::echo_error();
+    if(FDebug::check_isexistFunction()){
+      FDebug::code(500);
+      FDebug::echo_error();
+    }
   }
 
   public function check_isexistFunction()
@@ -148,7 +149,7 @@ class FDebug{
   {
     $text=str_replace("<br>","\n",$text);
     $text.="###########################";
-    $logPath=__DIR__."/../other/logs/".date('Y_m_d')."_error.txt";
+    $logPath=__DIR__."/../Other/logs/".date('Y_m_d')."_error.txt";
     FDebug::wrFile($logPath,date('Y-m-d H:i:s '). $text);
   }
 
@@ -167,7 +168,7 @@ class FDebug{
     if ($run==0) {
       $run='false';
     }
-    $logPath=__DIR__."/../other/logs/".date('Y_m_d')."_access.txt";
+    $logPath=__DIR__."/../Other/logs/".date('Y_m_d')."_access.txt";
     if ($wrFile==false) {
       return ['ip'=>$ip,'runTime'=>$run,'url'=>$callUrl,'get'=>$get,'post'=>$post];
     }
