@@ -31,6 +31,11 @@ CONST DEBUG_TOKEN='fphp';
 $RUN_CONFIG_CORE=false;
 
 /*
+* => To support the Composer uncomment this line \/
+*/
+CONST SUPPORT_COMPOSER=false;
+
+/*
 * show execute code time
 */
 CONST RUN_TIME=true;
@@ -50,6 +55,10 @@ try{
   if($getR[0]==INDEX && count($getR)==1){$getR[]='';}
 
   // auto load files
+
+  if (SUPPORT_COMPOSER) {
+    include_once __DIR__."/../vendor/autoload.php";
+  }
   spl_autoload_register(function($name){
     $arr=explode('\\',$name);
     $name=str_replace('\\','/',$name);
@@ -61,9 +70,6 @@ try{
     }
     elseif ($arr[0]=='package') {
       include_once  __DIR__."/../app/Other/$name.php";
-    }
-    else  {
-      include_once __DIR__."/../vendor/autoload.php";
     }
   });
 
