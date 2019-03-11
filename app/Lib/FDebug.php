@@ -123,7 +123,7 @@ class FDebug{
       $showText="Oh, there's a problem";
     }
 
-    if (File::exist(__DIR__."/../views/error/error.html")) {
+    if (File::exist(__DIR__."/../Views/error/error.html")) {
       ReturnData(view('error/error',['msg'=>$showText."<br>".$publicText,'code'=>$codeNumber]));
     }
     else {
