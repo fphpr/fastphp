@@ -11,25 +11,9 @@ class FDebug{
     if($error!=null){
       FDebug::$error=$error;
     }
-
-    if(FDebug::check_isexistFunction()){
-      FDebug::code(500);
-      FDebug::echo_error();
-    }
+    FDebug::echo_error();
   }
 
-  public function check_isexistFunction()
-  {
-    $getR=UrlParams(); $getR[]='';
-    LoadController($getR[0]);
-    if(method_exists($getR[0],$getR[1]."Action")){
-      return true;
-    }
-    else {
-      FDebug::error_msg('function',"'".$getR[1]."Action'  in $getR[0] controller");
-      return false;
-    }
-  }
 
   public function error_msg($error,$addText)
   {
@@ -50,13 +34,13 @@ class FDebug{
           break;
 
         case 'DB':
-          FDebug::echo_error( $addText,"problem in connection database",404);
-          FDebug::code(404);
+          FDebug::echo_error( $addText,"problem in connection database",500);
+          FDebug::code(500);
           break;
 
           case 'lang':
           FDebug::echo_error("<br>file not found path : $addText","Language file not found ",500);
-          FDebug::code(404);
+          FDebug::code(500);
           break;
 
         default:
@@ -85,7 +69,8 @@ class FDebug{
 
 
       default:
-          FDebug::code(500);
+        //FDebug::error_msg();
+        FDebug::code(500);
         break;
     }
   }
@@ -99,10 +84,11 @@ class FDebug{
   public function echo_error($addtext='',$publicText='',$codeNumber=500)
   {
     $e=FDebug::$error;
+
     $showText='';
 
     $getR=UrlParams();
-    $cname=$getR[0];
+    $cname=$getR[0]."Controller";
     $cfunc='';
     if (count($getR)>1) {
       $cfunc.=$getR[1].'Action';
@@ -115,7 +101,16 @@ class FDebug{
     else {
       $errorText= $addtext;
     }
-    $errorText.="<br><br> controller : $cname and function : $cfunc <br>";
+    if (strpos($errorText,"Controller' not found")>-1) {
+      FDebug::code(404);
+    }
+    elseif (strpos($errorText,"undefined method Controllers\\")>-1) {
+      FDebug::code(404);
+    }
+    else {
+      FDebug::code(500);
+    }
+    //$errorText.="<br><br> controller : $cname and function : $cfunc <br>";
     if (DEBUG_TOKEN==get('debug','')) {
       $showText=$errorText;
     }
@@ -124,7 +119,7 @@ class FDebug{
     }
 
     if (File::exist(__DIR__."/../Views/error/error.html")) {
-      ReturnData(view('error/error',['msg'=>$showText."<br>".$publicText,'code'=>$codeNumber]));
+      view('error/error',['msg'=>$showText."<br>".$publicText,'code'=>$codeNumber]);
     }
     else {
       echo $showText."<br>".$publicText;

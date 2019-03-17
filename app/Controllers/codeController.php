@@ -1,11 +1,12 @@
 <?php
+namespace Controllers;
 
 use App\Hash;
 use App\Auth;
 use App\File;
 use App\Framework;
 
-class code
+class codeController
 {
   function __construct(){
   }
@@ -17,7 +18,7 @@ class code
 
     return view('sample1',
     [
-      'name'=>'benjamin',
+      'name'=>'fastphp',
       'age'=>$age,
       'select_color'=>$select_color,
       'color'=>['blue','red','orange'],

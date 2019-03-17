@@ -31,18 +31,18 @@
   </div>
 
   <br>
-  <!-- echoVal('name') sample -->
-  <div>name : <b> <?php echoVal('name'); ?> </b> </div>
+  <!-- getVal('name') sample -->
+  <div>name : <b> <?= getVal('name'); ?> </b> </div>
 
   <br>
 
   <div >
-    age :<b> <?php echoVal('age'); ?> </b>
+    age :<b> <?= getVal('age'); ?> </b>
   </div>
 
 
   <div >
-    color : <b> <?php echoVal(['color',getVal('select_color')]) ?> </b>
+    color : <b> <?= getVal(['color',getVal('select_color')]) ?> </b>
   </div>
 
 

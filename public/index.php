@@ -79,10 +79,12 @@ try{
     $core->start();
   }
 
-  if(LoadController($getR[0])){
-    $controller=new $getR[0];
-    ReturnData($controller->{$getR[1]."Action"}());
-  }
+
+ $getR[0]="Controllers\\$getR[0]".Controller;
+ $getR[0]=str_replace('-','_',$getR[0]);
+ $controller=new $getR[0];
+ $getR[1]=str_replace('-','_',$getR[1]);
+ ReturnData($controller->{$getR[1]."Action"}());
 
   if($RUN_CONFIG_CORE){
     $core->end();
@@ -136,7 +138,6 @@ function LoadLibs($name='*'){
   if($name=='*'){
     $dir = __DIR__."/../app/Lib/$name";
     foreach(glob($dir) as $file){
-      echo basename($file)."  <br>";
       if(!is_dir($file))
       {
         include_once(__DIR__."/../app/Lib/". basename($file));
@@ -168,32 +169,16 @@ function include_file($file){
 function Redirect($url='',$die=true){header("Location: $url");if($die)die();}
 function GenerateToken($len=16){return bin2hex(openssl_random_pseudo_bytes($len));}
 function ReturnData($data){
-  if(is_array($data))
+  if(is_array($data) || is_object($data))
   {
     header('Content-Type: application/json ; charset=utf-8 ');
     $data=json_encode($data);
   }
+
   echo $data;
 }
 function view($view,$params=null){if($params!=null){$GLOBALS['val']=$params;}LoadView($view);}
 
-function echoVal($name=''){
-  if(is_array($name)){
-    $temp=$GLOBALS['val'];
-    foreach ($name as $key => $value) {
-      $temp=$temp[$value];
-    }
-    ReturnData($temp);
-    unset($temp);
-  }
-  else {
-    if (! isset($GLOBALS['val'][$name])) {
-      echo "not val";
-    }
-    ReturnData($GLOBALS['val'][$name]);
-
-  }
-}
 
 function getVal($name=''){
   if(is_array($name)){
@@ -282,7 +267,7 @@ function setLang($lang='en')
 function lang($label='',$autoEcho=true)
 {
   $local=LANGLOCAL;
-  if($local==null){$local='en';}
+  if($local==null||$local==LANGLOCAL){$local='en';}
 
   $label=explode('.',$label);
 

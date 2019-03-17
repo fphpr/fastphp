@@ -8,7 +8,6 @@ class core{
     public function start(){
         // run this function befor exeute controller function
         //$this->connect_database();
-
     }
 
     public function end(){

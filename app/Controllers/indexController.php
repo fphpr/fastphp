@@ -1,6 +1,9 @@
 <?php
+namespace Controllers;
+
 use App\Framework;
-class index
+
+class indexController
 {
 
   function __construct(){
@@ -12,7 +15,8 @@ class index
     return view('welcome',['ver'=>Framework::getVer()]);
   }
 
-  public function helloAction()
+  // yoursite.com/hello-test
+  public function hello_testAction()
   {
     return 'hello :)';
   }
