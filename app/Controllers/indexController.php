@@ -1,7 +1,7 @@
 <?php
 namespace Controllers;
 
-use App\Framework;
+use App\Web\Framework;
 
 class indexController
 {

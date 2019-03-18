@@ -62,11 +62,12 @@ try{
   spl_autoload_register(function($name){
     $arr=explode('\\',$name);
     $name=str_replace('\\','/',$name);
+
     if ( $arr[0]=='Models' || $arr[0]=='Controllers') {
       include_once  __DIR__."/../app/$name.php";
     }
     elseif ($arr[0]=='App') {
-      include_once __DIR__."/../app/Lib/web.php";
+      include_once __DIR__."/../app/Lib/$arr[1].php";
     }
     elseif ($arr[0]=='package') {
       include_once  __DIR__."/../app/Other/$name.php";
@@ -103,13 +104,12 @@ catch (\Exception $e) {
 
 function error($error=null,$byCode=null,$type=null){
   if(DEBUG){
-    LoadLibs('FDebug');
 
     if ($byCode==null) {
-      FDebug::check($error);
+      App\FDebug::check($error);
     }
     else {
-      FDebug::byCode($byCode,$type);
+      App\FDebug::byCode($byCode,$type);
     }
   }
 
@@ -134,28 +134,7 @@ function LoadController($name='',$check=false){
   }
   return true;
 }
-function LoadLibs($name='*'){
-  if($name=='*'){
-    $dir = __DIR__."/../app/Lib/$name";
-    foreach(glob($dir) as $file){
-      if(!is_dir($file))
-      {
-        include_once(__DIR__."/../app/Lib/". basename($file));
-      }
-    }
-  }
-  else {
-    if (is_array($name)) {
-      foreach ($name as $key => $libName) {
-        include_once(__DIR__."/../app/Lib/$libName.php");
-      }
-    }
-    else {
-      include_once(__DIR__."/../app/Lib/$name.php");
-    }
-  }
 
-}
 function include_file($file){
   if(file_exists($file)){
     include_once $file;

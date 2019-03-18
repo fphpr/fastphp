@@ -1,6 +1,8 @@
 <?php
-use App\File;
-use App\Address;
+namespace App;
+
+use App\Web\File;
+use App\Web\Address;
 
 class FDebug{
 
@@ -11,6 +13,7 @@ class FDebug{
     if($error!=null){
       FDebug::$error=$error;
     }
+
     FDebug::echo_error();
   }
 
@@ -110,6 +113,7 @@ class FDebug{
     else {
       FDebug::code(500);
     }
+
     //$errorText.="<br><br> controller : $cname and function : $cfunc <br>";
     if (DEBUG_TOKEN==get('debug','')) {
       $showText=$errorText;

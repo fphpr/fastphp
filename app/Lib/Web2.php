@@ -1,5 +1,5 @@
 <?php
-namespace App;
+namespace App\Web;
 
 /*
 * Repository : https://github.com/fphpr/fastphp
