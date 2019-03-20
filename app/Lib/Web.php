@@ -34,6 +34,23 @@ class Session
       Session::$session_startAppStatus=true;
     }
   }
+
+  public static function set($params)
+  {
+    Session::start();
+    foreach ($params as $key => $value) {
+      $_SESSION[$key]=$value;
+    }
+  }
+
+  public static function get($name)
+  {
+    Session::start();
+    if (isset($_SESSION[$name]) ==false || $_SESSION[$name]==null) {
+      return false;
+    }
+    return $_SESSION[$name];
+  }
 }
 
 
