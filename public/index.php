@@ -272,6 +272,23 @@ function rlang($label)
 {
   return lang($label,false);
 }
+
+function method()
+{
+  return $_SERVER['REQUEST_METHOD'];
+}
+function isPost(){
+  return (method()=='POST')?true:false;
+}
+function isGet(){
+  return (method()=='GET')?true:false;
+}
+
+function e($value='')
+{
+  echo htmlspecialchars($value);
+}
+
 if(RUN_TIME && ECHO_RUN_TIME){
   echo "<br><br> Time : ".(microtime(true)-$time_start)."<br>";
 }

@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.0';
+CONST  VER='1.1.1';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -91,7 +91,7 @@ class File
   {
     return __DIR__."/../Storage/$dir";
   }
-  public static function upload($fileName='file',$expensions=null,$size,$pathSave,$fileNameAs=null)
+  public static function upload($fileName,$pathSave,$size=null,$extensions=null,$fileNameAs=null)
   {
     if(isset($_FILES[$fileName])){
       $file_name = $_FILES[$fileName]['name'];
@@ -100,13 +100,13 @@ class File
       $file_type=$_FILES[$fileName]['type'];
       $file_ext=(explode('.',strtolower($file_name)));
       $file_ext=$file_ext[count($file_ext)-1];
-      //$expensions= array("jpeg","jpg","png");
+      //$extensions= array("jpeg","jpg","png");
 
-      if($expensions!=null && in_array($file_ext,$expensions)=== false){
+      if($extensions!=null && in_array($file_ext,$extensions)=== false){
          return['ok'=>false,'code'=>100];
       }
 
-      if($file_size > 1048576 * $size){
+      if($size!= null && $file_size > 1048576 * $size){
          return['ok'=>false,'code'=>101];
       }
 
@@ -143,9 +143,8 @@ class File
   }
   public static function download($name='',$path)
   {
-    //$file = $_GET['filename'];
-     $download_path = $path."/".$name;
-     $file_to_download = $download_path; // file to be downloaded
+     $file_to_download = $path."/".$name;
+
      header("Expires: 0");
      header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
      header("Cache-Control: no-store, no-cache, must-revalidate");
@@ -155,6 +154,42 @@ class File
      header('Content-disposition: attachment; filename='.basename($file_to_download));
      readfile($file_to_download);
      exit;
+  }
+
+  public static function showImage($file_name,$path)
+  {
+    $file_ext=(explode('.',strtolower($file_name)));
+    $file_ext=$file_ext[count($file_ext)-1];
+
+    switch( $file_ext ) {
+
+      case "gif": $ctype="image/gif";
+      break;
+
+      case "png": $ctype="image/png";
+      break;
+
+      case "jpeg":
+      case "jpg":
+      $ctype="image/jpeg";
+      break;
+
+      case 'svg':
+      $ctype="image/svg+xml";
+      break;
+      default:
+    }
+    $file_to_download = $path."/".$file_name;
+
+    header('Content-type: ' . $ctype);
+
+    if (File::exist($file_to_download)) {
+      return file_get_contents($file_to_download);
+    }
+    else {
+      http_response_code(404);
+      return '404 file not found';
+    }
   }
 
   public static function delete($path,$name)
