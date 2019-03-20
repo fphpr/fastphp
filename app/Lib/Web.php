@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.1';
+CONST  VER='1.1.1 beta';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -36,51 +36,67 @@ class Session
   }
 }
 
+
 class Auth
 {
   public static $users_table='users';
-  public static function login($id='')
+  public static function login($id='',$minute=0)
   {
-    Session::start();
-    $_SESSION["user_id"]=$id;
+    $date=false;
+    if ($minute>0) {
+      $date = strtotime("+$minute minute");
+      $date=date('Y-m-d H:i:s', $date);
+    }
+
+    Session::set([
+      'user_id'=>$id,
+      'ex_login'=>$date
+    ]);
   }
+
   public static function logout()
   {
-    Session::start();
-    $_SESSION["user_id"]=null;
+    Session::set([
+      'user_id'=>null,
+      'ex_login'=>false
+    ]);
   }
-  public static function isLogin()
+  public static function isLogin($getId=false)
   {
-    Session::start();
-    if (Auth::getId()!=false) {
+    $ex_login=Session::get('ex_login');
+    $user_id=Session::get('user_id');
+
+    if ($user_id==false || ($ex_login!=false && $ex_login < date('Y-m-d H:i:s')) ) {
+      return false;
+    }
+    if ($getId==false) {
       return true;
     }
-    return false;
-  }
-  public static function getId()
-  {
-    Session::start();
-    if (isset($_SESSION["user_id"]) && $_SESSION["user_id"]!=null) {
-      return $_SESSION["user_id"];
+    else {
+      return $user_id;
     }
-    return false;
+  }
+  public static function id()
+  {
+    return Auth::isLogin(true);
   }
   public static function user($table=null)
   {
     if ($table==null) {
       $table=Auth::$users_table;
     }
-    $id=Auth::getId();
+    $id=Auth::id();
     if($id==false){return false;}
     return DB::getOne("select * from $table where id=?",[$id]);
   }
-  public static function justLogin($url='')
+  public static function justLogin($url='/')
   {
-    if ( Auth::isLogin()==false) {
+    if (Auth::isLogin()==false ) {
       Redirect(url($url),true);
     }
   }
 }
+
 
 /**
  *
