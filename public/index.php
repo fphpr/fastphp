@@ -184,16 +184,16 @@ function PathUrl($dir = __DIR__."/../"){
   }
   $root .= '/';return $root;
 }
+
 function UrlParams($rMode=false){
   $params=PathUrl();
 
   $fullUrl=UrlHttp(false);
+   if ($fullUrl!='' && strpos($fullUrl,'?') > -1 ) {
+     $fullUrl=substr($fullUrl,0,strpos($fullUrl,'?'));
+   }
 
   $params=substr($fullUrl,(strlen($params)));
-
-  if ($params!='' && strpos($params,'?') > -1 ) {
-    $params=substr($params,0,strpos($params,'?'));
-  }
 
   if (substr($params,strlen($params)-1)=='/') {
     $params=mb_substr($params, 0, -1);
@@ -211,7 +211,9 @@ function UrlParams($rMode=false){
   if ($rMode) {
     return['path'=>$res,'mainURL'=>$RootURL];
   }
-  return $res;}
+  return $res;
+}
+
 function UrlHttp($htt=true){
   $main='';
   if ($htt) {$main=Htt();}
@@ -231,10 +233,10 @@ function url($value='')
 function res($value='/',$return=false)
 {
   if ($return) {
-    return url('/public'.$value,true);
+    return url('/public'.$value);
   }
   else {
-    echo url('/public'.$value,true);;
+    echo url('/public'.$value);;
   }
 }
 
