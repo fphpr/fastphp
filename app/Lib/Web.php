@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.1 beta';
+CONST  VER='1.1.1 beta2';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -51,6 +51,24 @@ class Session
     }
     return $_SESSION[$name];
   }
+
+  public static function remove($name)
+  {
+    Session::start();
+    if (isset($_SESSION[$name]) ==false || $_SESSION[$name]==null) {
+      return false;
+    }
+    unset($_SESSION[$name]);
+    return true;
+  }
+
+  public static function clear()
+  {
+    Session::start();
+    \session_unset();
+    \session_destroy();
+  }
+
 }
 
 
