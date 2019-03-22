@@ -189,22 +189,21 @@ function UrlParams($rMode=false){
 
   $fullUrl=UrlHttp(false);
 
-  if (substr($fullUrl,strlen($fullUrl)-1)!='/') {
-    $fullUrl.='/';
-  }
-
   $params=substr($fullUrl,(strlen($params)));
 
+  if ($params!='' && strpos($params,'?') > -1 ) {
+    $params=substr($params,0,strpos($params,'?'));
+  }
+
+  if (substr($params,strlen($params)-1)=='/') {
+    $params=mb_substr($params, 0, -1);
+  }
 
   if($params==''){
     $RootURL=substr($fullUrl,0);
   }
   else {
     $RootURL=substr($fullUrl,0,(strpos($fullUrl,$params)));
-  }
-
-  if ($params!='' && strpos($params,'?') > -1 ) {
-    $params=substr($params,0,strpos($params,'?'));
   }
 
   $res=explode('/',(($params!='')?$params:INDEX));
