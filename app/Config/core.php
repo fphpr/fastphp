@@ -1,12 +1,12 @@
 <?php
 namespace fastphp;
 
-use App\DB;
-use App\Auth;
+use App\Web\DB;
+use App\Web\Auth;
 
 class core{
     public function start(){
-        // run this function befor exeute controller function
+        // run this function befor execute controller function
         //$this->connect_database();
     }
 
