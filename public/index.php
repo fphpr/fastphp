@@ -291,5 +291,5 @@ function e($value='')
 }
 
 if(RUN_TIME && ECHO_RUN_TIME){
-  echo "<br><br> Time : ".(microtime(true)-$time_start)."<br>";
+  echo "<br><br> Time : ".(microtime(true)-TIME_START)."<br>";
 }
