@@ -244,7 +244,7 @@ function setLang($lang='en')
 {
   define('LANGLOCAL',$lang);
 }
-function lang($label='',$autoEcho=true)
+function lang($label='')
 {
   $local=LANGLOCAL;
   if($local==null||$local==LANGLOCAL){$local='en';}
@@ -261,18 +261,10 @@ function lang($label='',$autoEcho=true)
     error(null,500,'lang|'."/app/Other/lang/$local/".$label[0].".php");
   }
 
-  if ($autoEcho) {
-    echo  $lang_array[$label[1]];
-  }
-  else {
-    return  $lang_array[$label[1]];
-  }
+  return  $lang_array[$label[1]];
 
 }
-function rlang($label)
-{
-  return lang($label,false);
-}
+
 
 function method()
 {
