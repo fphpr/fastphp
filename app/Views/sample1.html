@@ -8,7 +8,7 @@
 
   <title>sample1</title>
 
-  <link rel="stylesheet" href="<?php res('/css/style.css'); ?>">
+  <link rel="stylesheet" href="<?= res('/css/style.css'); ?>">
 
   <style media="screen">
     *{
@@ -79,7 +79,7 @@
 
 <script type="text/javascript">
 
-  var list='<?php echo json_encode(getVal("color")) ?>';
+  var list='<?= json_encode(getVal("color")) ?>';
   json=JSON.parse(list)
 
   $.each(json,function (index,value) {
