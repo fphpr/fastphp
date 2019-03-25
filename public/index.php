@@ -230,7 +230,7 @@ function url($value='')
   $main=UrlParams(true)['mainURL'];
     return Htt().substr($main,0,strlen($main)-1).$value;
 }
-function res($value='/',$return=false)
+function res($value='/',$return=true)
 {
   if ($return) {
     return url('/public'.$value);
