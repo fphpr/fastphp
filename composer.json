@@ -1,0 +1,14 @@
+{
+    "name": "fphpr/fastphp",
+    "type": "project",
+    "description": "The Fast PHP Framework.",
+    "keywords": [
+        "framework",
+        "FastPHP"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^7.0.0"
+    },
+    
+}
