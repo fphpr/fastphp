@@ -247,7 +247,7 @@ function setLang($lang='en')
 function lang($label='')
 {
   $local=LANGLOCAL;
-  if($local==null||$local==LANGLOCAL){$local='en';}
+  if($local==null||$local=='LANGLOCAL'){$local='en';}
 
   $label=explode('.',$label);
 
