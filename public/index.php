@@ -244,9 +244,14 @@ function setLang($lang='en')
 {
   define('LANGLOCAL',$lang);
 }
+function getLang()
+{
+  return LANGLOCAL;
+}
+
 function lang($label='')
 {
-  $local=LANGLOCAL;
+  $local=getLang();
   if($local==null||$local=='LANGLOCAL'){$local='en';}
 
   $label=explode('.',$label);
