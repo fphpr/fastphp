@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.1 beta10';
+CONST  VER='1.1.1 beta11';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -250,13 +250,29 @@ class File
       return true;
     }
     return false;
+  }
 
+
+public static function delete_dir($dir) {
+
+   $files =File::getFiles($dir);
+   // array_diff(scandir($dir), array('.','..'));
+    foreach ($files as $file) {
+      (is_dir("$dir/$file")) ? File::delete_dir("$dir/$file") : unlink("$dir/$file");
+    }
+    return rmdir($dir);
   }
 
   public static function exist($path='')
   {
     return file_exists($path);
   }
+
+  public static function getFiles($path)
+  {
+    return array_diff(scandir($path), ['.', '..']);
+  }
+
 }
 
 
@@ -267,6 +283,7 @@ class DB
   public static $username;
   public static $password;
   public static $getType;
+  public static $host='localhost';
 
   public static $is_connect=false;
 
@@ -283,7 +300,7 @@ class DB
 
   public static function connect()
   {
-    DB::$db = new \PDO("mysql:host=localhost;dbname=".DB::$db_name.";charset=utf8mb4",DB::$username,DB::$password);
+    DB::$db = new \PDO("mysql:host=".DB::$host.";dbname=".DB::$db_name.";charset=utf8mb4",DB::$username,DB::$password);
     DB::$db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
   }
@@ -339,6 +356,40 @@ class DB
       DB::$getType=\PDO::FETCH_CLASS;
     }
   }
+
+  public function cleenBackup()
+  {
+    File::delete_dir(__DIR__."/../Other/framework/database/backup");
+  }
+
+  public static function backup($name='',$path=null)
+  {
+    set_time_limit(0);
+    $date=date('Y-m-d_H_i_s');
+    $dm=date('Y_m_d');
+    $dir=__DIR__."/../Other/framework/database/backup/$dm/";
+
+    mkdir($dir,0777, true);
+
+
+    $dbhost=DB::$host;
+    $dbname=DB::$db_name;
+    $dbuser=DB::$username;
+    $dbpass=DB::$password;
+
+    if ($path==null) {
+      $filename=$dir.$name.$date.".sql";
+    }
+    else {
+      $filename=$path;
+    }
+
+    $command = "mysqldump --single-transaction -h $dbhost -u$dbuser -p$dbpass $dbname > $filename";
+    \system($command);
+
+    return true;
+  }
+
 }
 
 
