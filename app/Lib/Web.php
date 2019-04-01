@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.1 beta11';
+CONST  VER='1.1.1 beta12';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -362,6 +362,20 @@ class DB
     File::delete_dir(__DIR__."/../Other/framework/database/backup");
   }
 
+  public function backup_table($tb_name,$path=null)
+  {
+    set_time_limit(0);
+    $date=date('Y-m-d_H_i_s');
+    $dm=date('Y_m_d');
+    $dir=__DIR__."/../Other/framework/database/backup/$dm";
+    mkdir($dir,0777, true);
+    $dir=realpath($dir);
+    $filename=$dir.'/'.$tb_name."_$date.sql";
+    $filename=str_replace('\\','/',$filename);
+
+    return DB::execute("SELECT * INTO OUTFILE '$filename' FROM $tb_name");
+  }
+
   public static function backup($name='',$path=null)
   {
     set_time_limit(0);
@@ -370,7 +384,6 @@ class DB
     $dir=__DIR__."/../Other/framework/database/backup/$dm/";
 
     mkdir($dir,0777, true);
-
 
     $dbhost=DB::$host;
     $dbname=DB::$db_name;
@@ -384,9 +397,9 @@ class DB
       $filename=$path;
     }
 
-    $command = "mysqldump --single-transaction -h $dbhost -u$dbuser -p$dbpass $dbname > $filename";
-    \system($command);
+    $command = "mysqldump --opt -h $dbhost -u$dbuser -p$dbpass $dbname > $filename";
 
+    system($command);
     return true;
   }
 
