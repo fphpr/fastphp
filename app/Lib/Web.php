@@ -253,10 +253,10 @@ class File
   }
 
 
-public static function delete_dir($dir) {
+  public static function delete_dir($dir) {
 
-   $files =File::getFiles($dir);
-   // array_diff(scandir($dir), array('.','..'));
+    $files =File::getFiles($dir);
+
     foreach ($files as $file) {
       (is_dir("$dir/$file")) ? File::delete_dir("$dir/$file") : unlink("$dir/$file");
     }
