@@ -106,15 +106,16 @@ class FDebug{
     }
     if (strpos($errorText,"Controller' not found")>-1) {
       FDebug::code(404);
+      $codeNumber=404;
     }
     elseif (strpos($errorText,"undefined method Controllers\\")>-1) {
       FDebug::code(404);
+      $codeNumber=404;
     }
     else {
       FDebug::code(500);
     }
 
-    //$errorText.="<br><br> controller : $cname and function : $cfunc <br>";
     if (DEBUG_TOKEN==get('debug','')) {
       $showText=$errorText;
     }
@@ -122,8 +123,11 @@ class FDebug{
       $showText="Oh, there's a problem";
     }
 
-    if (File::exist(__DIR__."/../Views/error/error.html")) {
+    if ($codeNumber==500 && File::exist(__DIR__."/../Views/error/error.html")) {
       view('error/error',['msg'=>$showText."<br>".$publicText,'code'=>$codeNumber]);
+    }
+    elseif ($codeNumber==404 && File::exist(__DIR__."/../Views/error/404.html")) {
+      view('error/404',['msg'=>$showText."<br>".$publicText,'code'=>$codeNumber]);
     }
     else {
       echo $showText."<br>".$publicText;

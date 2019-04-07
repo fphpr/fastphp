@@ -1,8 +1,8 @@
 <?php
-namespace Model;
+namespace Models;
 
 /*
-* this model for is the sample
+* this model sample
 * you can delete this model file
 */
 class Car{
