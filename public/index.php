@@ -224,6 +224,10 @@ function Htt()
   return (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : ((isset( $_SERVER["HTTPS"] ) && strtolower( $_SERVER["HTTPS"] ) == "on" ) ? 'https' : 'http')) . '://' ;
 }
 
+function CurrentUrlStr(){
+  $url=implode('/',UrlParams());
+  return url("/$url");
+}
 
 function url($value='')
 {
