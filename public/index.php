@@ -237,10 +237,10 @@ function url($value='')
 function res($value='/',$return=true)
 {
   if ($return) {
-    return url('/public'.$value);
+    return url($value);
   }
   else {
-    echo url('/public'.$value);;
+    echo url($value);
   }
 }
 
