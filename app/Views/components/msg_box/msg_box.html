@@ -1,0 +1,128 @@
+<style media="screen">
+  .modal-content.rtl>.modal-header>button{
+    left: 0;
+    right: auto;
+    margin-right: auto;
+    margin-left: 0;
+  }
+
+
+</style>
+
+<div class="modal"   id="modal_msg_box" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body" style="text-align:center;">
+
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary"></button>
+        <button type="button" class="btn btn-secondary" ></button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  function msg_box(option){
+
+    m=$('#modal_msg_box');
+    button_close_id='.btn-secondary';
+    button_primary_id='.btn-primary';
+    title_id='.modal-title';
+    text_id='.modal-body';
+    content_id='.modal-content';
+
+    if (option=='hide'||option=='close') {
+      m.modal('hide');
+      return m;
+    }
+    else if (option =='get data') {
+      return m.data('value');
+    }
+
+    title=option.title || null;
+    text=option.text;
+    close_text=option.close_text || 'OK';
+    callback_text=option.callback_text || null;
+    dir=option.dir || 'ltr';
+    space_button=option.space_button || false;
+    data=option.data || {};
+    close_able=option.close_able || true;
+
+
+    m.find(button_close_id).on('click',option.close_callback);
+    m.find(button_close_id).on('click',function () {
+      if (close_able==true || close_able==null) {
+          m.modal('hide');
+      }
+    });
+
+
+    m.data('value',data);
+
+    if (title!=null) {
+      m.find(title_id).text(title).css('display','')
+    }
+    else {
+      m.find(title_id).text('').css('display','none')
+    }
+
+    m.find(text_id).text(text);
+
+    m.find(button_close_id).text(close_text);
+
+    if (callback_text!=null && callback_text!='') {
+      m.find(button_primary_id).text(callback_text).css('display','');
+      m.find(button_primary_id).on('click',option.callback);
+    }
+    else {
+      m.find(button_primary_id).text('').css('display','none');
+    }
+
+    m.find(content_id).css('direction',dir);
+    m.find(title_id).css('direction',dir);
+    m.find(text_id).css('direction',dir);
+
+    if (dir=='rtl') {
+      margin_right_space='0';
+      margin_left_space='auto';
+      m.find(content_id).addClass('rtl').removeClass('ltr')
+    }
+    else {
+      margin_right_space='auto';
+      margin_left_space='0';
+      m.find(content_id).removeClass('rlt')
+    }
+
+    if (space_button) {
+      m.find(button_primary_id).css('margin-right',margin_right_space).css('margin-left',margin_left_space);
+    }
+    else {
+      m.find(button_primary_id).css('margin-right','').css('margin-left','');
+
+    }
+
+    m.on('hidden.bs.modal', function (e) {
+      m.find(button_primary_id).off('click');
+      m.find(button_close_id).off('click');
+    })
+
+    m.modal('show');
+
+    return m;
+
+  }
+</script>
