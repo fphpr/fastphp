@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.3';
+CONST  VER='1.1.4 beta';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -271,6 +271,20 @@ class File
   public static function getFiles($path)
   {
     return array_diff(scandir($path), ['.', '..']);
+  }
+
+  public static function readFile($name)
+  {
+    $text='';
+    $myfile = fopen($name, "r");;
+    $text= fread($myfile,filesize($name));
+    fclose($myfile);
+    return $text;
+  }
+
+  public static function putContent($name,$content)
+  {
+    file_put_contents($name, $content);
   }
 
 }
