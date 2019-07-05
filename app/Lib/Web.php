@@ -270,7 +270,12 @@ class File
 
   public static function getFiles($path)
   {
-    return array_diff(scandir($path), ['.', '..']);
+    $files=[];
+    $res= array_diff(scandir($path), $filter);
+    foreach ($res as $key => $file) {
+      $files[]=$file;
+    }
+    return $files;
   }
 
   public static function readFile($name)
