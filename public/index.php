@@ -291,6 +291,18 @@ function e($value='')
   echo htmlspecialchars($value);
 }
 
+
+
+function public_path($path='')
+{
+  return __DIR__.$path;
+}
+function root_path($path='')
+{
+  return public_path().'/../app'.$path;
+}
+
+
 if(RUN_TIME && ECHO_RUN_TIME){
   echo "<br><br> Time : ".(microtime(true)-TIME_START)."<br>";
 }
