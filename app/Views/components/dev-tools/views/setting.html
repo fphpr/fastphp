@@ -1,0 +1,153 @@
+<div class="page-title" style="">
+  <h3>Settings</h3>
+</div>
+
+
+
+<div class="" style="padding:15px;">
+
+  <div class="ui horizontal divider" >Public</div>
+
+  <div class="ui cards centered" >
+    <div class="card" data-param="$RUN_CONFIG_CORE" data-value="<?= getVal('params')['$RUN_CONFIG_CORE'] ?>">
+      <div class="content">
+        <div class="header">
+          Run Config File
+        </div>
+        <div class="meta">
+        app/Config/core.php
+      </div>
+      </div>
+      <div class="extra content">
+        <div class="ui toggle checkbox">
+          <input type="checkbox" name="public">
+          <label><?= getVal('params')['$RUN_CONFIG_CORE']=='true'?'Enabeled':'Disabled' ?></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-param="SUPPORT_COMPOSER" data-value="<?= getVal('params')['SUPPORT_COMPOSER'] ?>">
+      <div class="content">
+        <div class="header">
+          Suport Composer
+        </div>
+      </div>
+      <div class="extra content">
+        <div class="ui toggle checkbox">
+          <input type="checkbox" name="public">
+          <label><?= (getVal('params')['SUPPORT_COMPOSER']=='true')?'Enabeled':'Disabled' ?></label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+
+<div class="ui horizontal divider" style="margin-top: 25px;">Debug</div>
+
+  <div class="ui cards centered" style="margin-top: -15px;">
+
+      <div class="card"  data-param="DEBUG" data-value="<?= getVal('params')['DEBUG'] ?>">
+        <div class="content">
+          <div class="header">
+            Debug System
+          </div>
+        </div>
+        <div class="extra content">
+          <div class="ui toggle checkbox">
+            <input type="checkbox" name="public">
+            <label><?= getVal('params')['DEBUG']=='true'?'Enabeled':'Disabled' ?> Debug</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" data-param="DEBUG_FILE_LOG" data-value="<?= getVal('params')['DEBUG_FILE_LOG'] ?>">
+        <div class="content">
+          <div class="header">
+            Debug File System
+          </div>
+          <div class="meta">
+            app/Other/logs/...
+          </div>
+        </div>
+        <div class="extra content">
+          <div class="ui toggle checkbox">
+            <input type="checkbox" name="public">
+            <label><?= getVal('params')['DEBUG_FILE_LOG']=='true'?'Enabeled':'Disabled' ?> Write Error Log file</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" data-param="DEBUG_TOKEN" data-value="<?= getVal('params')['DEBUG_TOKEN'] ?>">
+        <div class="content">
+          <div class="header">
+            Debug Token
+          </div>
+          <div class="meta">
+            token for show error code
+          </div>
+        </div>
+        <div class="extra content" style="display: flex;">
+          <div class="ui input">
+            <input type="text" name="" value="<?= str_replace("'",'',getVal('params')['DEBUG_TOKEN'])  ?>">
+          </div>
+           <button onclick="saveDebugToken()" style="margin-right: 0px;margin-left: auto;" class="ui green button" type="button" name="button">save</button>
+        </div>
+      </div>
+
+      <div class="card" data-param="DEBUG_TOKEN" data-value="<?= getVal('params')['DEBUG_TOKEN'] ?>">
+        <div class="content">
+          <div class="header">
+            Error Logs
+          </div>
+          <div class="meta">
+            
+          </div>
+        </div>
+        <div class="extra content" style="display: flex;">
+          <a href="<?= url('/dev-tools/log-show/last') ?>" style="margin-right: 0px;margin-left: auto;" class="ui blue button" type="button" name="button">Show Last Errors</a>
+          <a href="<?= url('/dev-tools/logs') ?>" style="margin-right: 0px;margin-left: auto;" class="ui blue button" type="button" name="button">Show Files</a>
+        </div>
+      </div>
+
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('div[data-value="true"]').each(function (index,html) {
+    console.log(index);
+    $(html).find('.checkbox').checkbox('check');
+  });
+
+  $('.ui.checkbox').checkbox({
+    onChange:function () {
+      card=$(this).closest('.card');
+      param=card.data('param');
+      value=card.data('value');
+      to=$(this).closest('.checkbox').checkbox('is checked');
+      console.log(param,value,);
+      changeSettings('check',param,to);
+    }
+  });
+
+  function changeSettings(action,param,to_value) {
+    sendPost('<?= url('/dev-tools/setting-manage') ?>',{
+      action:action,
+      param:param,
+      to_value:to_value
+    },function (get) {
+      if (get.ok) {
+        loading(true)
+        window.location.reload();
+      }
+    })
+  }
+
+  function saveDebugToken() {
+    value=$('div[data-param="DEBUG_TOKEN"]').find('input').val();
+    value="'"+value+"'";
+    changeSettings('string','DEBUG_TOKEN',value);
+  }
+</script>

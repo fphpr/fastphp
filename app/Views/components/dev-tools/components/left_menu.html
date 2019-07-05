@@ -1,0 +1,113 @@
+
+<style media="screen">
+  .menu_item_icon{
+    text-align: center;
+  }
+  .menu_item_icon>.item_icon>i{
+    font-size: 30px;
+  }
+  .menu_item_icon>.item_text{
+    margin-top: 10px;
+  }
+
+</style>
+
+<div class="ui left fixed vertical menu">
+  <div class="item">
+    <!-- <img class="ui mini image" src="/images/logo.png"> -->
+  </div>
+
+  <a class="item" href="<?= url('/dev-tools') ?>">
+    <div class="menu_item_icon">
+      <div class="item_icon">
+        <i class="home icon" ></i>
+      </div>
+      <div class="item_text">
+        Dashboard
+      </div>
+    </div>
+  </a>
+
+  <a class="item" href="<?= url('/dev-tools/settings') ?>">
+    <div class="menu_item_icon">
+      <div class="item_icon">
+        <i class="cogs icon" ></i>
+      </div>
+      <div class="item_text">
+        Settings
+      </div>
+    </div>
+  </a>
+
+  <a class="item">
+    <div class="menu_item_icon">
+      <div class="item_icon">
+        <i class="paint brush icon" ></i>
+      </div>
+      <div class="item_text">
+        UI
+      </div>
+    </div>
+  </a>
+
+  <!-- <a class="item">
+    <div class="menu_item_icon">
+      <div class="item_icon">
+        <i class="object ungroup outline icon" ></i>
+      </div>
+      <div class="item_text">
+        Component View
+      </div>
+    </div>
+  </a> -->
+
+  <!-- <a class="item">
+    <div class="menu_item_icon">
+      <div class="item_icon">
+        <i class="boxes icon" ></i>
+      </div>
+      <div class="item_text">
+        Pakages
+      </div>
+    </div>
+  </a> -->
+
+  <div class="ui dropdown item">
+    <div class="menu_item_icon">
+      <div class="item_icon">
+        <i class="boxes icon" ></i>
+      </div>
+      <div class="item_text">
+        Components
+      </div>
+    </div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      <a class="item"><i class="object ungroup outline icon"></i>Component View</a>
+      <a class="item"><i class="boxes icon"></i>Pakages</a>
+    </div>
+  </div>
+
+  <div class="ui dropdown item">
+    <div class="menu_item_icon">
+      <div class="item_icon">
+        <i class="save outline icon" ></i>
+      </div>
+      <div class="item_text">
+        DataBase
+      </div>
+    </div>
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      <a href="<?= url('/dev-tools/migration') ?>" class="item"><i class="database icon"></i>Migration</a>
+      <a class="item"><i class="cloud download icon"></i> Backup</a>
+    </div>
+  </div>
+
+  <a class="item">Logout</a>
+</div>
+
+
+<script type="text/javascript">
+  $('.ui .dropdown').dropdown()
+</script>

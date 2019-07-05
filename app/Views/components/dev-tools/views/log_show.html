@@ -1,0 +1,120 @@
+<style media="screen">
+  .card_error{
+    white-space: pre-line;
+    direction: ltr;
+    padding: 10px;
+    border-radius: 5px;
+    border-style: solid;
+    border-color: rgb(233, 233, 233);
+    border-width: 1px;
+    margin-top: 5px;
+    background: #fbfbfb;
+    margin-bottom: 10px;
+  }
+  .code_line{
+    color: #d00505;
+  }
+  .code_title{
+    font-size: 16px;
+    color: #cbf9b4;
+    font-weight: bold;
+    background: #72541c;
+    padding: 10px;
+    margin-top: -10px;
+    margin-left: -11px;
+    margin-right: -11px;
+    border-radius: 5px 5px 0px 0px;
+  }
+</style>
+
+<div class="page-title" style="">
+  <h3>Show Log</h3>
+</div>
+
+
+<div class="" style="padding:15px;">
+
+  <div class="">
+    <div class="ui icon input">
+      <input oninput="search($(this).val())" type="text" placeholder="Search...">
+      <i class="search icon"></i>
+    </div>
+
+    <a href="<?= url('/dev-tools/logs') ?>" class="ui button blue"  name="button">Go To Logs</a>
+  </div>
+
+
+  <div id="text" class="" style="white-space: pre-line">
+    <?= e(getVal('text')) ?>
+  </div>
+
+  <div id="modern_show">
+
+  </div>
+
+
+</div>
+
+<script type="text/javascript">
+  function searchList(str) {
+    str=str.trim();
+    $('#searchList .item').each(function (index,html) {
+      item=$(html);
+      text=item.find('a').text();
+      if (text.indexOf(str)>-1) {
+        item.fadeIn();
+      }
+      else {
+        item.fadeOut();
+      }
+    })
+  }
+
+  try {
+    text= $("#text").text();
+    items=  text.split('###########################');
+    for (var i = 0; i < items.length; i++) {
+      item=items[i].trim()
+
+      pos_line=item.indexOf('Line :');
+      pos_file=item.indexOf('file:');
+      pos_date=item.indexOf('\n');
+      title=item.substr(0,pos_date);
+
+      item=item.replace(title,'<div class="code_title">'+title+'</div>');
+
+      if (pos_line>-1) {
+        item=item.replace('Line :','<b class="code_line">'+'Line :'+'</b>');
+      }
+      if (pos_line) {
+        item=item.replace('file:','<b class="code_line">'+'file:'+'</b>');
+      }
+
+      $('#modern_show').append('<div class="card_error" >'+item+'</div>');
+    }
+    if (items.length>0) {
+      $('#text').remove();
+    }
+  } catch (e) {
+    $('#text').fadeIn(0);
+    $('#modern_show').fadeOut();
+  } finally {
+
+  }
+
+  function search(str) {
+    str=str.trim();
+    $('#modern_show .card_error').each(function (index,html) {
+      item=$(html);
+      text=item.html();
+      if (text.indexOf(str)>-1) {
+        item.fadeIn();
+      }
+      else {
+        item.fadeOut();
+      }
+    })
+  }
+  $("html, body").animate({ scrollTop: $(document).height()-$(window).height() });
+
+</script>

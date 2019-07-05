@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <!-- semantic Init Component -->
+    <?= view('components/semantic/init/init') ?>
+
+
+    <title>Developer Tools | Login</title>
+
+  </head>
+  <body>
+
+
+    <div class="ui stackable grid centered">
+      <div class="evelen wide mobile eight wide tablet  six wide computer column ">
+        <div class="" style="padding: 15px; max-width: 350px;margin: auto;">
+          <div class="ui form">
+            <div class="field">
+              <label>Developer Username</label>
+              <input type="text" id="input-username" placeholder="Enter Username ..">
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" id="input-password" placeholder="Enter Password ..">
+            </div>
+            <div class="field" style="text-align: center;">
+              <button onclick="Login()" class="ui teal button" type="submit">Login</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <?= view('components/semantic/loading/loading') ?>
+  <?= view('components/semantic/msg_box/msg_box') ?>
+
+
+<script type="text/javascript">
+
+  function Login() {
+    sendPost('<?= url('/dev-tools/login') ?>',{
+      username:$('#input-username').val(),
+      password:$('#input-password').val(),
+
+    },function (get) {
+      if (get.ok==true) {
+        window.location.reload()
+      }
+      else {
+        msg_box({
+          text:'<?= lang('msg.error_pass') ?>'
+        })
+      }
+    })
+
+  }
+
+  function sendPost(url,params,callback) {
+    loading(true);
+
+    $.post(url,params)
+    .done(function (get) {
+      loading(false);
+      callback(get);
+    })
+    .fail(function () {
+      loading(false);
+      callback(false);
+      msg_box({
+        text:'<?= lang('msg.error_net') ?>',
+      })
+    })
+
+  }
+</script>
+
+  </body>
+</html>

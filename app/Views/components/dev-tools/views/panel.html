@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+  <!-- Bootstrap Init Component -->
+  <?= view('components/semantic/init/init') ?>
+
+
+  <title>Developer Tools | Login</title>
+
+
+  <style media="screen">
+    .main-content{
+      margin-left: 210px;
+    }
+    .card{
+      background: #fdfbfb !important;
+    }
+    .page-title{
+      text-align: center;margin-bottom: 10px;background: #5681b8;color: white;padding: 15px;
+    }
+  </style>
+</head>
+<body>
+  <?= view('components/dev-tools/components/left_menu') ?>
+
+  <div class="main-content">
+    <?= view(getVal('page'),getVal('pageParams')) ?>
+  </div>
+
+  <?= view('components/semantic/loading/loading') ?>
+  <?= view('components/semantic/msg_box/msg_box') ?>
+
+
+<script type="text/javascript">
+function sendPost(url,params,callback) {
+  loading(true);
+
+  $.post(url,params)
+  .done(function (get) {
+    loading(false);
+    callback(get);
+  })
+  .fail(function () {
+    loading(false);
+    callback(false);
+    msg_box({
+      text:'<?= lang('msg.error_net') ?>',
+    })
+  })
+
+}
+</script>
+
+</body>
+</html>

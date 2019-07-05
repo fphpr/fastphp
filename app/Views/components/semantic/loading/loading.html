@@ -1,0 +1,27 @@
+<div id="modal_loading_s" class="ui segment" style="display:none;position: fixed;width: 100%;height: 100%;top: -15px;left: 0px;background: #fff0;">
+  <div class="ui active dimmer">
+    <div class="ui text loader">Please Wait ..</div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  function loading(action,text){
+    m=$('#modal_loading_s');
+    m_text_id='.text';
+
+    if (action==null || action ==true) {
+      m.fadeIn();
+    }
+    else {
+      m.fadeOut();
+    }
+
+    if (text!=null) {
+      m.find(m_text_id).text(text);
+    }
+    else {
+      m.find(m_text_id).text('Please Wait ..');
+    }
+  }
+</script>
