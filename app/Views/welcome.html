@@ -1,40 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Welcome Page</title>
+  <!-- Load semantic Css -->
+  <link rel="stylesheet" href="<?= res('/lib/semantic/semantic.min.css'); ?>">
 
-  <link rel="stylesheet" href="<?= res('/lib/bootstrap/css/bootstrap.min.css'); ?>">
-  <link rel="stylesheet" href="<?= res('/css/style.css'); ?>">
+
+  <!-- Load Jquery -->
+  <script src="<?= res('/lib/jquery/jquery-3.3.1.min.js'); ?>" charset="utf-8"></script>
+
+  <!-- Load semantic Js -->
+  <script src="<?= res('/lib/semantic/semantic.min.js'); ?>" charset="utf-8"></script>
+
+
+  <style media="screen">
+    body{
+      background: #302f2f;
+      color: #fff;
+    }
+    .h100d{
+      height: 100%;
+    }
+    .m25p{
+      margin-top: 25px;
+    }
+    a.button{
+      min-width: 150px;
+    }
+    .tob_bar{
+      position: absolute;
+      top: 10px;
+      margin-left: 10px;
+      left: 0px;
+    }
+    .tob_bar>a{
+      color: #fff !important;
+      font-size: 30px;
+    }
+  </style>
+
 </head>
 <body>
 
-  <div class="container">
-    <div class="row justify-content-md-center">
-      <div class="col-md-auto">
-        <h3 class="fphp_title" >Welcome To FastPHP :)</h3>
-      </div>
-    </div>
-
-    <div style="text-align: center;margin-top: 25px;">
-      <div style="color: #43e5ed;">
-        version : <?= getVal('ver') ?>
-      </div>
-      <div style="margin-top: 10px;">
-        <button type="button" class="btn btn-light" onclick="window.location.href='https://github.com/fphpr/fastphp'" name="button">Github</button>
-        <button type="button" class="btn btn-success" onclick="window.location.href='https://fastphpframework.com'" name="button">Document</button>
-      </div>
-
-    </div>
-
+  <div class="tob_bar">
+    <a href="https://github.com/fphpr/fastphp" target="_blank">
+      <i class="icon github"></i>
+    </a>
+    <a href="https://fastphpframework.com" target="_blank">
+      <i class="icon world"></i>
+    </a>
   </div>
 
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="<?= res('/lib/jquery/jquery-3.3.1.min.js'); ?>" ></script>
-  <script src="<?= res('/lib/bootstrap/js/bootstrap.min.js'); ?>"></script>
+  <div class="ui grid centered h100d" >
+    <div class="ten wide column center aligned middle aligned">
+      <h3 class="fphp_title" style="color: #c6c4c4;">Welcome To FastPHP  :)</span> </h3>
+
+      <div class="m25p">
+        version : <?= getVal('ver') ?>
+      </div>
+
+      <div class="m25p">
+        <a target="_blank" href="<?= url('/dev-tools') ?>" class="ui button basic blue icon"  > <i class="laptop icon" ></i> Developer Tools</a>
+        <a target="_blank" href="https://fastphpframework.com/docs/last/The-Basics" class="ui button basic green"  > Document </a>
+      </div>
+
+    </div>
+  </div>
+
+
 </body>
 </html>
