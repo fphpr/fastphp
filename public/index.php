@@ -5,8 +5,12 @@
 * site : https://fastphpframework.com
 *
 */
+
+CONST DomainName='';
 CONST Developer_Username='admin';
 CONST Developer_Password='fphp';
+CONST Developer_Two_Token='';
+
 /*
  *  enable Debug system
 */

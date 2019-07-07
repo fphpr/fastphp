@@ -9,6 +9,7 @@
   <div class="ui horizontal divider" >Public</div>
 
   <div class="ui cards centered" >
+
     <div class="card" data-param="$RUN_CONFIG_CORE" data-value="<?= getVal('params')['$RUN_CONFIG_CORE'] ?>">
       <div class="content">
         <div class="header">
@@ -40,10 +41,48 @@
       </div>
     </div>
 
+
   </div>
 
 
 
+
+<div class="ui horizontal divider" style="margin-top: 25px;">Security</div>
+<div class="ui cards centered" >
+
+  <div class="card" data-param="DomainName" data-value="<?= getVal('params')['DomainName'] ?>">
+    <div class="content">
+      <div class="header">
+        Site Name
+      </div>
+      <div class="meta">
+      set your domin name
+    </div>
+    </div>
+    <div class="extra content" style="display: flex;">
+    <div class="ui input">
+      <input placeholder="example.com" type="text" name="" value="<?= str_replace("'",'',getVal('params')['DomainName'])  ?>">
+    </div>
+    <button onclick="saveDomainName()" style="margin-right: 0px;margin-left: auto;" type="button" class="ui button green" name="button">save</button>
+    </div>
+  </div>
+
+
+  <div class="card" data-param="Developer_Two_Token" data-value="<?= (getVal('params')['Developer_Two_Token']=='')?'false':'true' ?>" s="<?= getVal('params')['Developer_Two_Token'] ?>">
+    <div class="content">
+      <div class="header">
+        two-step password
+      </div>
+    </div>
+    <div class="extra content">
+      <div class="ui toggle checkbox">
+        <input type="checkbox" name="public">
+        <label><?= (getVal('params')['Developer_Two_Token']!='')?'Enabeled':'Disabled' ?></label>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 <div class="ui horizontal divider" style="margin-top: 25px;">Debug</div>
 
@@ -103,7 +142,7 @@
             Error Logs
           </div>
           <div class="meta">
-            
+
           </div>
         </div>
         <div class="extra content" style="display: flex;">
@@ -125,12 +164,33 @@
     onChange:function () {
       card=$(this).closest('.card');
       param=card.data('param');
+
+      if (param=='Developer_Two_Token') {
+        gotoTwoStep(card);
+        return;
+      }
       value=card.data('value');
       to=$(this).closest('.checkbox').checkbox('is checked');
       console.log(param,value,);
       changeSettings('check',param,to);
     }
   });
+
+  function gotoTwoStep(ob) {
+    DomainName=$('div[data-param="DomainName"]').find('input').val();
+    if (DomainName=='') {
+      $('div[data-param="DomainName"]').find('div .ui.input').addClass('error');
+      ob.find('.toggle.checkbox').checkbox('set unchecked');
+      $('div[data-param="DomainName"]').transition('shake');
+      return;
+    }
+    if (ob.find('.toggle.checkbox').checkbox('is checked')) {
+      window.location.href="<?= url('/dev-tools/two-step/generate') ?>";
+    }
+    else {
+      changeSettings('string','Developer_Two_Token',"''");
+    }
+  }
 
   function changeSettings(action,param,to_value) {
     sendPost('<?= url('/dev-tools/setting-manage') ?>',{
@@ -149,5 +209,11 @@
     value=$('div[data-param="DEBUG_TOKEN"]').find('input').val();
     value="'"+value+"'";
     changeSettings('string','DEBUG_TOKEN',value);
+  }
+  function saveDomainName() {
+    value=$('div[data-param="DomainName"]').find('input').val();
+    value=value.toLowerCase();
+    value="'"+value+"'";
+    changeSettings('string','DomainName',value);
   }
 </script>

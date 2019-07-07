@@ -35,7 +35,7 @@ class DevTools{
     File::putContent('index.php',$newText);
   }
 
-  public function getValueIndex($param,$index=null)
+  public function getValueIndex($param,$index=null,$removeQuotation=false)
   {
     if ($index==null) {
       $index=DevTools::readIndex();
@@ -47,9 +47,14 @@ class DevTools{
     $main_str=substr($start_str,$_param);
     $end_index=strpos($main_str,';');
 
-    return substr($main_str,0,$end_index);
+    $val=substr($main_str,0,$end_index);
+    if ($removeQuotation) {
+      $val=str_replace("'",'',$val);
+    }
+
+    return $val;
   }
-  public function getValuesIndex($array)
+  public function getValuesIndex($array,$removeQuotation=false)
   {
     $index=DevTools::readIndex();
     $res=[];
@@ -59,7 +64,7 @@ class DevTools{
     foreach ($array as $key => $value) {
       $name=$value;
       $name=str_replace('=','',$name);
-      $res[$name]= DevTools::getValueIndex($value,$index);
+      $res[$name]= DevTools::getValueIndex($value,$index,$removeQuotation);
     }
     return $res;
   }

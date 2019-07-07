@@ -1,48 +1,94 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
 
-    <!-- semantic Init Component -->
-    <?= view('components/semantic/init/init') ?>
-
-
-    <title>Developer Tools | Login</title>
-
-  </head>
-  <body>
+  <!-- semantic Init Component -->
+  <?= view('components/semantic/init/init') ?>
 
 
-    <div class="ui stackable grid centered">
-      <div class="evelen wide mobile eight wide tablet  six wide computer column ">
-        <div class="" style="padding: 15px; max-width: 350px;margin: auto;">
-          <div class="ui form">
+  <title>Developer Tools | Login</title>
+
+
+  <style media="screen">
+    body{
+      background: #302f2f;
+    }
+    label{
+      color: #fff !important ;
+    }
+    .h100d{
+      height: 100%;
+    }
+    .mt15p{
+      margin-top: 15px !important;
+    }
+    .border{
+      padding: 15px;
+      max-width: 350px;
+      border: solid 1px;
+      border-color: rgba(255, 255, 255, 0.27);
+      border-radius: 5px;
+      margin: auto;
+    }
+    .title{
+      text-align: center;
+      color: #a3a1a1 !important;
+      font-size: 20px;
+    }
+    button{
+      min-width: 120px;
+    }
+  </style>
+
+</head>
+<body>
+
+
+  <div class="ui stackable grid centered middle aligned h100d">
+    <div class="evelen wide mobile eight wide tablet  six wide computer column ">
+
+      <div class="border ">
+        <div class="title">
+          Developer Tools Panel
+        </div>
+
+        <div class="ui divider"></div>
+        <div class="ui form mt15p">
+          <div class="field">
+            <label>Developer Username</label>
+            <input type="text" id="input-username" placeholder="Enter Username ..">
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="input-password" placeholder="Enter Password ..">
+          </div>
+
+          <?php if (getVal('two_token')!=''): ?>
             <div class="field">
-              <label>Developer Username</label>
-              <input type="text" id="input-username" placeholder="Enter Username ..">
+              <label>Two-Step Password</label>
+              <input type="password" id="input-password-two" placeholder="...">
             </div>
-            <div class="field">
-              <label>Password</label>
-              <input type="password" id="input-password" placeholder="Enter Password ..">
-            </div>
-            <div class="field" style="text-align: center;">
-              <button onclick="Login()" class="ui teal button" type="submit">Login</button>
-            </div>
+          <?php endif; ?>
+          <div class="field" style="text-align: center;">
+            <button onclick="Login()" class="ui teal button" type="submit">Login</button>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
 
   <?= view('components/semantic/loading/loading') ?>
   <?= view('components/semantic/msg_box/msg_box') ?>
 
 
-<script type="text/javascript">
+  <script type="text/javascript">
 
   function Login() {
     sendPost('<?= url('/dev-tools/login') ?>',{
       username:$('#input-username').val(),
       password:$('#input-password').val(),
+      password_two:$('#input-password-two').val()
 
     },function (get) {
       if (get.ok==true) {
@@ -76,5 +122,5 @@
   }
 </script>
 
-  </body>
+</body>
 </html>
