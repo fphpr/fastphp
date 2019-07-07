@@ -268,7 +268,7 @@ class File
     return file_exists($path);
   }
 
-  public static function getFiles($path)
+  public static function getFiles($path,$filter=['.','..','.gitignore'])
   {
     $files=[];
     $res= array_diff(scandir($path), $filter);
