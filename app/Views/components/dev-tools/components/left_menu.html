@@ -17,7 +17,7 @@
     <div style="height: 55px;background: #696767;margin: -15px;text-align: center;padding-top: 23px;color: white;background: #5681b8;">Developer Tools</div>
   </div>
 
-  <a class="item" href="<?= url('/dev-tools') ?>">
+  <!-- <a class="item" href="<?= url('/dev-tools') ?>">
     <div class="menu_item_icon">
       <div class="item_icon">
         <i class="home icon" ></i>
@@ -26,7 +26,7 @@
         Dashboard
       </div>
     </div>
-  </a>
+  </a> -->
 
   <a class="item" href="<?= url('/dev-tools/settings') ?>">
     <div class="menu_item_icon">
@@ -39,7 +39,7 @@
     </div>
   </a>
 
-  <a class="item">
+  <!-- <a class="item">
     <div class="menu_item_icon">
       <div class="item_icon">
         <i class="paint brush icon" ></i>
@@ -48,7 +48,7 @@
         UI
       </div>
     </div>
-  </a>
+  </a> -->
 
   <!-- <a class="item">
     <div class="menu_item_icon">
@@ -72,7 +72,7 @@
     </div>
   </a> -->
 
-  <div class="ui dropdown item">
+  <!-- <div class="ui dropdown item">
     <div class="menu_item_icon">
       <div class="item_icon">
         <i class="boxes icon" ></i>
@@ -86,9 +86,9 @@
       <a class="item"><i class="object ungroup outline icon"></i>Component View</a>
       <a class="item"><i class="boxes icon"></i>Pakages</a>
     </div>
-  </div>
+  </div> -->
 
-  <div class="ui dropdown item">
+  <!-- <div class="ui dropdown item">
     <div class="menu_item_icon">
       <div class="item_icon">
         <i class="save outline icon" ></i>
@@ -102,12 +102,12 @@
       <a href="<?= url('/dev-tools/migration') ?>" class="item"><i class="database icon"></i>Migration</a>
       <a class="item"><i class="cloud download icon"></i> Backup</a>
     </div>
-  </div>
+  </div> -->
 
-  <a class="item">Logout</a>
+  <a href="<?= url('/dev-tools/logout') ?>" class="item">Logout <i class="sign-out icon" ></i> </a>
 </div>
 
 
 <script type="text/javascript">
-  $('.ui .dropdown').dropdown()
+  $('.ui .dropdown').dropdown();
 </script>

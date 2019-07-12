@@ -22,7 +22,8 @@ class dev_toolsController
   public function Action()
   {
     if (Auth::isLogin()) {
-      return DevTools::view('dashboard',['text'=>'hello modern framework']);
+      //return DevTools::view('dashboard',[]);
+      return Redirect(url('/dev-tools/settings'));
     }
     else {
       $two_token=DevTools::getValueIndex('Developer_Two_Token',null,true);
@@ -177,6 +178,12 @@ class dev_toolsController
     else {
       return['ok'=>false,'msg'=>lang('msg.error_pass')];
     }
+  }
+
+  public function logoutAction()
+  {
+    Auth::logout('/dev-tools');
+    return Redirect(url('/dev-tools'));
   }
 
 }

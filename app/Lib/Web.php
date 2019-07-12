@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.5 beta';
+CONST  VER='1.1.6 beta';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
