@@ -8,7 +8,7 @@
 
 CONST DomainName='';
 CONST Developer_Username='admin';
-CONST Developer_Password='fphp';
+CONST Developer_Password='123456';
 CONST Developer_Two_Token='';
 
 /*

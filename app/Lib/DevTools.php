@@ -90,4 +90,39 @@ class DevTools{
     }
     return['ok'=>true];
   }
+
+  public function editUsername()
+  {
+    $cUsername=post('cUsername',null);
+    $cPassword=post('cPassword',null);
+    $newUsername=post('newUsername',null);
+
+    $get_c_username=DevTools::getValueIndex('Developer_Username',null,true);
+    $get_c_Password=DevTools::getValueIndex('Developer_Password',null,true);
+
+    if ($cUsername==$get_c_username && $cPassword==$get_c_Password) {
+      DevTools::changeStringIndex('Developer_Username',"'$newUsername'");
+      return['ok'=>true];
+    }
+    else {
+      return['ok'=>false,'msg'=>lang('msg.error_pass')];
+    }
+  }
+  public function editPassword()
+  {
+    $cUsername=post('cUsername',null);
+    $cPassword=post('cPassword',null);
+    $newPassword=post('newPassword',null);
+
+    $get_c_username=DevTools::getValueIndex('Developer_Username',null,true);
+    $get_c_Password=DevTools::getValueIndex('Developer_Password',null,true);
+
+    if ($cUsername==$get_c_username && $cPassword==$get_c_Password) {
+      DevTools::changeStringIndex('Developer_Password',"'$newPassword'");
+      return['ok'=>true];
+    }
+    else {
+      return['ok'=>false,'msg'=>lang('msg.error_pass')];
+    }
+  }
 }

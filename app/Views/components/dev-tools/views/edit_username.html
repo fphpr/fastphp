@@ -1,0 +1,62 @@
+<div class="page-title" style="">
+  <h3>Edit Username</h3>
+</div>
+
+
+<div class="" style="padding:15px;">
+  <div class="ui card" style="margin: auto;">
+    <div class="content">
+      <div class="ui form">
+        <div class="field">
+          <label>Currently Username</label>
+          <input id="cUsername" type="text" placeholder="Enter Currently Username" name="" value="">
+        </div>
+        <div class="field">
+          <label>Currently Password</label>
+          <input id="cPassword" type="password" placeholder="Enter Developer Password" name="" value="">
+        </div>
+
+        <div class="ui divider"></div>
+
+        <div class="field">
+          <label>New Username</label>
+          <input id="newUsername" type="text" placeholder="Enter New Username" name="" value="" >
+        </div>
+
+
+        <div class="field" style="text-align:center;">
+          <button onclick="edit()" class="ui blue button" type="button" name="button">Edit Username</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  function edit(){
+    cUsername=$('#cUsername').val();
+    cPassword=$('#cPassword').val();
+    newUsername=$('#newUsername').val();
+
+    sendPost('<?= url('/dev-tools/account/edit/username') ?>',{
+      cUsername:cUsername,
+      cPassword:cPassword,
+      newUsername:newUsername
+    },function (get) {
+      if (get.ok) {
+        msg_box({
+          text:'done successfully',
+        });
+        setTimeout(function () {
+          window.location.href="<?=url('/dev-tools/settings') ?>";
+        },2000);
+      }
+      else {
+        msg_box({
+          text:get.msg
+        })
+      }
+    })
+  }
+</script>

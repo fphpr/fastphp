@@ -116,6 +116,45 @@ class dev_toolsController
     }
   }
 
+  public function accountAction()
+  {
+    $url=urlParams();
+    if ($url[2]=='edit') {
+      $res=$this->account_edit($url);
+    }
+
+    return $res;
+  }
+
+  public function account_edit($url)
+  {
+    switch ($url[3]) {
+      case 'password':
+        if (isGet()) {
+          return DevTools::view('edit_password',[]);
+        }
+        else if(isPost()){
+          return DevTools::editPassword();
+        }
+
+      break;
+
+      case 'username':
+        if (isGet()) {
+          return DevTools::view('edit_username',[]);
+        }
+        else if(isPost()){
+          return DevTools::editUsername();
+        }
+
+      break;
+
+      default:
+        // code...
+        break;
+    }
+  }
+
 
 
   public function loginAction()

@@ -82,6 +82,18 @@
     </div>
   </div>
 
+  <div class="card" data-param="Developer_Two_Token" data-value="<?= getVal('params')['Developer_Username']; ?>" >
+    <div class="content">
+      <div class="header">
+        edit username and password
+      </div>
+    </div>
+    <div class="extra content" style="display: flex;">
+      <a href="<?= url('/dev-tools/account/edit/username') ?>" style="" class="ui mini blue button" name="button">Edit Username</a>
+      <a href="<?= url('/dev-tools/account/edit/password') ?>" style="margin-right: 0px;margin-left: auto;" class="ui mini blue button" name="button">Edit Password</a>
+    </div>
+  </div>
+
 </div>
 
 <div class="ui horizontal divider" style="margin-top: 25px;">Debug</div>
@@ -146,8 +158,8 @@
           </div>
         </div>
         <div class="extra content" style="display: flex;">
-          <a href="<?= url('/dev-tools/log-show/last') ?>" style="margin-right: 0px;margin-left: auto;" class="ui blue button" type="button" name="button">Show Last Errors</a>
-          <a href="<?= url('/dev-tools/logs') ?>" style="margin-right: 0px;margin-left: auto;" class="ui blue button" type="button" name="button">Show Files</a>
+          <a href="<?= url('/dev-tools/log-show/last') ?>" style="" class="ui blue mini button" name="button">Show Last Errors</a>
+          <a href="<?= url('/dev-tools/logs') ?>" style="margin-right: 0px;margin-left: auto;" class="ui mini blue button"  name="button">Show Files</a>
         </div>
       </div>
 
