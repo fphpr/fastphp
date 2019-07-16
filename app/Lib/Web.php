@@ -134,8 +134,8 @@ class Auth
 
 
 /**
- *
- */
+*
+*/
 class File
 {
   public static function storagePath($dir='')
@@ -154,11 +154,11 @@ class File
       //$extensions= array("jpeg","jpg","png");
 
       if($extensions!=null && in_array($file_ext,$extensions)=== false){
-         return['ok'=>false,'code'=>100];
+        return['ok'=>false,'code'=>100];
       }
 
       if($size!= null && $file_size > 1048576 * $size){
-         return['ok'=>false,'code'=>101];
+        return['ok'=>false,'code'=>101];
       }
 
       if ($fileNameAs !=null) {
@@ -194,17 +194,17 @@ class File
   }
   public static function download($name='',$path)
   {
-     $file_to_download = $path."/".$name;
+    $file_to_download = $path."/".$name;
 
-     header("Expires: 0");
-     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-     header("Cache-Control: no-store, no-cache, must-revalidate");
-     header("Cache-Control: post-check=0, pre-check=0", false);
-     header("Pragma: no-cache");  header("Content-type: application/file");
-     header('Content-length: '.filesize($file_to_download));
-     header('Content-disposition: attachment; filename='.basename($file_to_download));
-     readfile($file_to_download);
-     exit;
+    header("Expires: 0");
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+    header("Cache-Control: no-store, no-cache, must-revalidate");
+    header("Cache-Control: post-check=0, pre-check=0", false);
+    header("Pragma: no-cache");  header("Content-type: application/file");
+    header('Content-length: '.filesize($file_to_download));
+    header('Content-disposition: attachment; filename='.basename($file_to_download));
+    readfile($file_to_download);
+    exit;
   }
 
   public static function showImage($file_name,$path)
@@ -297,82 +297,212 @@ class File
 
 class DB
 {
-  public static $db;
-  public static $db_name;
-  public static $username;
-  public static $password;
-  public static $getType;
-  public static $host='localhost';
+  // Database config array
+  private static $db_config=[];
 
-  public static $is_connect=false;
-
-  /*
-  * Init Database Connection
-  */
-  public static function install($db_name,$username,$password,$getArray=false)
+  /**
+  * Init Database Connections
+  * @param array $config [ 'config_name'=>[driver,db_host,db_host_port,db_name,username,password,charset],[...] ]
+  *
+  **/
+  public static function setConfig($config,$getArray=false)
   {
-    DB::$db_name=$db_name;
-    DB::$username=$username;
-    DB::$password=$password;
-    DB::setSelectResultType($getArray);
+    DB::$db_config=$config;
   }
 
-  public static function connect()
+  /**
+   * To use multiple databases
+   * @param  string $config_name config key name
+   * @return query  class query
+   */
+  public static function in($config_name)
   {
-    DB::$db = new \PDO("mysql:host=".DB::$host.";dbname=".DB::$db_name.";charset=utf8mb4",DB::$username,DB::$password);
-    DB::$db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
+    return  DB::initOnceDB($config_name);
   }
 
-  public static function execute($query,$params=null,$return=false){
-
-      if (DB::$is_connect==false) {
-        DB::connect();
-        DB::$is_connect=true;
-      }
-      if ($params==null) {
-        $stmt = DB::$db->query($query);
-      }
-      else {
-        $stmt=DB::$db->prepare($query);
-        $stmt->execute($params);
-        }
-
-        if($return){
-          return $stmt->fetchAll(DB::$getType);
-        }
-  }
-  public static function select($query,$params=null){
+  /**
+   * @param  string $query  sql query
+   * @param  array  $params query params
+   * @return array
+   */
+  public static function select($query,$params=[])
+  {
     return DB::execute($query,$params,true);
   }
-  public static function insert($query,$params=null){
-    DB::execute($query,$params,false);
-  }
-  public static function update($query,$params=null){
-    DB::execute($query,$params,false);
-  }
-  public static function delete($query,$params=null){
-    DB::execute($query,$params,false);
-  }
 
-  public static function getOne($query,$params=null){
-      $result = DB::execute($query,$params,true);
-      if (is_array($result) && count($result)>0) {
-        return $result[0];
-      }
-      else{
-        return false;
-      }
-  }
-
-
-  public static function setSelectResultType($getArray)
+  /**
+   * @param  string $query   sql query
+   * @param  array  $params query params
+   * @return stdClass or false(bool)   return first result
+   */
+  public static function getOne($query,$params=[])
   {
-    if ($getArray) {
-      DB::$getType=\PDO::FETCH_ASSOC;
+    return DB::mainDB()->getOne($query,$params);
+  }
+
+  /*
+  * @param  string $query   sql query
+  * @param  array  $params query params
+  */
+  public static function update($query,$params=[])
+  {
+    DB::execute($query,$params,false);
+  }
+
+  /*
+  * @param  string $query   sql query
+  * @param  array  $params query params
+  */
+  public static function insert($query,$params=[])
+  {
+    DB::execute($query,$params,false);
+  }
+
+  /*
+  * @param  string $query   sql query
+  * @param  array  $params query params
+  */
+  public static function delete($query,$params=[])
+  {
+    DB::execute($query,$params,false);
+  }
+
+  /*
+  * can execute all sql query
+  * @param  string $query   sql query
+  * @param  array  $params query params
+  * @param  bool  $return for receive result query
+  */
+  public static function execute($query,$params,$return=false)
+  {
+    return DB::mainDB()->execute($query,$params,$return);
+
+  }
+
+  /**
+   * get PDO Object
+   * @return db
+   */
+  public static function getPDO()
+  {
+    return DB::mainDB()->getPDO();
+  }
+
+  /**
+   * @return int last insert id
+   */
+  public static function lastInsertId()
+  {
+    return DB::mainDB()->lastInsertId();
+  }
+
+  /**
+   * get First Config Key in $db_config
+   * @return string
+   */
+  private static function getFirstConfigKey()
+  {
+    return key(DB::$db_config);
+  }
+
+/**
+ * Initialization of the database connection
+ *
+ * @param  [string,int] $key config key
+ * @return PDO
+ */
+  private static function initOnceDB($key)
+  {
+    if (!isset( DB::$db_config[$key]['db'])) {
+      $query=new query;
+      DB::$db_config[$key]['db']=$query->set(DB::$db_config[$key]);
+      return DB::$db_config[$key]['db'];
     }
     else {
-      DB::$getType=\PDO::FETCH_CLASS;
+      return DB::$db_config[$key]['db'];
+    }
+  }
+
+  /**
+   * get main (first) database pdo
+   * @return PDO
+   */
+  public static function mainDB()
+  {
+    return DB::initOnceDB(DB::getFirstConfigKey());
+  }
+
+}
+
+class query{
+  private $db;
+  private $isConnect=false;
+
+  public function set($config)
+  {
+    $db=new \PDO($config['driver'].":host=".$config['db_host'].':'.$config['db_host_port'].";dbname=".$config['db_name'].";charset=".$config['charset'],$config['username'],$config['password']);
+    $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    $this->setSelectResultType(! $config['result_stdClass']);
+    $this->db=$db;
+    $this->isConnect=true;
+    return $this;
+  }
+
+  public function getPDO()
+  {
+    return $this->db;
+  }
+
+  public function lastInsertId()
+  {
+    return $this->getPDO()->lastInsertId();
+  }
+
+  public function execute($query,$params=null,$return=false){
+
+    if ($params==null) {
+      $stmt = $this->db->query($query);
+    }
+    else {
+      $stmt=$this->db->prepare($query);
+      $stmt->execute($params);
+    }
+
+    if($return){
+      return $stmt->fetchAll($this->getType);
+    }
+  }
+  public function select($query,$params=null){
+    return query::execute($query,$params,true);
+  }
+  public function insert($query,$params=null){
+    $this->execute($query,$params,false);
+  }
+  public function update($query,$params=null){
+    $this->execute($query,$params,false);
+  }
+  public function delete($query,$params=null){
+    $this->execute($query,$params,false);
+  }
+
+  public function getOne($query,$params=null){
+    $result = $this->execute($query,$params,true);
+    if (is_array($result) && count($result)>0) {
+      return $result[0];
+    }
+    else{
+      return false;
+    }
+  }
+
+
+  public function setSelectResultType($getArray)
+  {
+    if ($getArray) {
+      $this->getType=\PDO::FETCH_ASSOC;
+    }
+    else {
+      $this->getType=\PDO::FETCH_CLASS;
     }
   }
 
@@ -392,10 +522,10 @@ class DB
     $filename=$dir.'/'.$tb_name."_$date.sql";
     $filename=str_replace('\\','/',$filename);
 
-    return DB::execute("SELECT * INTO OUTFILE '$filename' FROM $tb_name");
+    return $this->execute("SELECT * INTO OUTFILE '$filename' FROM $tb_name");
   }
 
-  public static function backup($name='',$path=null)
+  public function backup($name='',$path=null)
   {
     set_time_limit(0);
     $date=date('Y-m-d_H_i_s');
@@ -424,7 +554,6 @@ class DB
 
 }
 
-
 class Address
 {
 
@@ -447,8 +576,8 @@ class Address
 }
 
 /**
- *
- */
+*
+*/
 class Request
 {
 
