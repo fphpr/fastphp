@@ -88,7 +88,7 @@
     </div>
   </div> -->
 
-  <!-- <div class="ui dropdown item">
+  <div class="ui dropdown item">
     <div class="menu_item_icon">
       <div class="item_icon">
         <i class="save outline icon" ></i>
@@ -99,10 +99,11 @@
     </div>
     <i class="dropdown icon"></i>
     <div class="menu">
+      <a href="<?= url('/dev-tools/data-base/config') ?>" class="item"><i class="cog icon"></i>Config</a>
       <a href="<?= url('/dev-tools/migration') ?>" class="item"><i class="database icon"></i>Migration</a>
       <a class="item"><i class="cloud download icon"></i> Backup</a>
     </div>
-  </div> -->
+  </div>
 
   <a href="<?= url('/dev-tools/logout') ?>" class="item">Logout <i class="sign-out icon" ></i> </a>
 </div>
@@ -110,4 +111,9 @@
 
 <script type="text/javascript">
   $('.ui .dropdown').dropdown();
+
+  function addConfig() {
+    params=$('#form').form('get values');
+    console.log('params',params);
+  }
 </script>

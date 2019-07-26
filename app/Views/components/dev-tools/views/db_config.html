@@ -1,0 +1,188 @@
+<div class="page-title" style="">
+  <h3>DataBase Config</h3>
+</div>
+
+<div class="" style="padding:15px;">
+
+  <div class="ui card" style="width: 100%;">
+    <div class="content">
+      <div id="form" class="ui form">
+
+        <div class="three fields">
+          <div class="field">
+            <label>driver</label>
+            <div class="ui selection dropdown">
+              <input type="hidden" name="driver" value="mysql">
+              <i class="dropdown icon"></i>
+              <div class="default text">driver</div>
+              <div class="menu">
+                <div class="item" data-value="mysql">mysql</div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="field" >
+            <label>charset</label>
+            <div class="ui selection dropdown search">
+              <input type="hidden" name="charset" value="utf8mb4">
+              <i class="dropdown icon"></i>
+              <div class="default text">Select charset</div>
+              <div class="menu">
+                <div class="item" data-value="utf8mb4">utf8mb4</div>
+                <div class="item" data-value="utf8">utf8</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="fields">
+              <div class="eleven wide field">
+                <label for="db_host" >database host</label>
+                <input  type="text" name="db_host" value="localhost">
+              </div>
+              <div class="five wide field">
+                <label  for="db_host_port" >host port</label>
+                <input  type="text" name="db_host_port" value="3306">
+
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="four fields">
+
+          <div class="field">
+            <label>config name</label>
+            <input type="text" name="config_name" value="">
+          </div>
+
+
+          <div class="field">
+            <label>database name</label>
+            <input type="text" name="db_name" value="">
+          </div>
+
+          <div class="field">
+            <label>username</label>
+            <input type="text" name="username" value="">
+          </div>
+
+          <div class="field">
+            <label>password</label>
+            <input type="password" name="password" value="">
+          </div>
+
+
+        </div>
+
+
+      </div>
+      <div class="" style="text-align:center;">
+        <button onclick="newConfig()" type="button" class="ui button teal" name="button">add database config</button>
+      </div>
+    </div>
+  </div>
+
+
+    <div class="" style="margin-top: 16px;">
+      <table class="ui celled table">
+        <thead>
+          <tr>
+            <th>config name</th>
+            <th>database name</th>
+            <th>username</th>
+            <th>action</th>
+          </tr>
+        </thead>
+          <tbody>
+            <?php $count=0; ?>
+            <?php foreach (getVal('configs') as $key => $config): ?>
+              <?php $count++; ?>
+
+              <tr data-id="<?= $key ?>"  >
+                <td ><?php echo "$key "; if($count==1)echo '<b style="color:blue;">(main)</b>'; ?></td>
+                <td ><?=$config->db_name ?></td>
+                <td ><?=$config->username ?></td>
+                <td >
+                  <button class="ui button icon blue" type="button" name="button"> <i class="edit icon" ></i> </button>
+                  <button onclick="deleteMSG($(this))" class="ui button icon orange" type="button" name="button"> <i class="remove icon" ></i> </button>
+                </td>
+              </tr>
+            <?php endforeach; ?>
+
+
+          </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+  $('.ui.dropdown').dropdown();
+
+  function newConfig() {
+    get_params=$('#form').form('get values');
+    params={
+      driver:get_params.driver,
+      db_host:get_params.db_host,
+      db_host_port:get_params.db_host_port,
+      db_name:get_params.db_name,
+      username:get_params.username,
+      password:get_params.password,
+      charset:get_params.charset,
+      result_stdClass:true,
+    };
+    console.log(get_params);
+    sendPost('<?= url('/dev-tools/data-base/config/add') ?>',
+    {
+      params:params,
+      key:get_params.config_name
+    }
+    ,function (get) {
+      if (get.ok) {
+        loading(true);
+        location.reload();
+      }
+      else {
+        msg_box({
+          text:get.msg
+        })
+      }
+    })
+  }
+
+  function deleteMSG(btn) {
+    tr=btn.closest('tr');
+    key=tr.data('id');
+    console.log('key',key);
+    msg=msg_box({
+      text:'Delete '+key+' database config ?',
+      callback_text:'delete',
+      close_text:'close',
+      data:{key:key},
+      callback:function (data) {
+        deleteConfig(msg.data('value').key)
+      }
+    })
+  }
+  function deleteConfig(key) {
+    sendPost('<?= url('/dev-tools/data-base/config/delete') ?>',{
+      key:key
+    },function (get) {
+      if (get.ok) {
+        loading(true);
+        location.reload();
+      }
+      else {
+        msg_box({
+          text:get.msg
+        })
+      }
+    })
+  }
+</script>

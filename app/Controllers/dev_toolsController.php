@@ -7,6 +7,7 @@ use App\Web\File;
 use App\Web\Session;
 use App\DevTools;
 use App\Migration;
+use App\web\DB;
 
 class dev_toolsController
 {
@@ -155,6 +156,46 @@ class dev_toolsController
         break;
     }
   }
+
+  public function data_baseAction()
+  {
+    $url=urlParams();
+
+    switch ($url[2]) {
+      case 'config':
+        return $this->db_config($url);
+      break;
+    }
+  }
+
+  public function db_config($url)
+  {
+    # config page
+    if (count($url)==3) {
+      $timezone = timezone_identifiers_list();
+      //$config_count=count(DB::getConfig());
+      $configs= DevTools::getDatabaseConfig();
+
+      return DevTools::view('db_config',['configs'=>$configs,'timezone'=>$timezone]);
+    }
+    else {
+      switch ($url[3]) {
+        case 'add':
+          DevTools::addDatabaseConfig(post('key'),post('params'));
+          return['ok'=>true];
+        break;
+        case 'delete':
+          DevTools::removeDatabaseConfig(post('key'));
+          return['ok'=>true];
+        break;
+
+        default:
+          // code...
+          break;
+      }
+    }
+  }
+
 
 
 

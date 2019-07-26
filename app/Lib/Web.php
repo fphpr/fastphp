@@ -310,6 +310,11 @@ class DB
     DB::$db_config=$config;
   }
 
+  public static function getConfig()
+  {
+    return DB::$db_config;
+  }
+
   /**
    * To use multiple databases
    * @param  string $config_name config key name
