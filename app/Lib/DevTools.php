@@ -165,7 +165,7 @@ class DevTools{
     $end_id   = '//end=>database-config'   ;
     $config=DevTools::readConfig();
 
-    $config=str_replace($end_id,"\n $str \n \t\t\t$end_id",$config);
+    $config=str_replace($end_id," $str \n \t\t\t$end_id",$config);
     File::putContent(root_path('/Config/core.php'),$config);
     return  $config;
   }
@@ -179,13 +179,28 @@ class DevTools{
     $MainCode=DevTools::findInsideCode($config,$start_id,$end_id,false,true);
 
     $find= DevTools::findCode($MainCode['code'],'$config['."'$key']",';',false,false);
+
     $config=str_replace($find['code'],"",$config);
+
+
+    //$config=str_replace($config,"",$config);
+
     File::putContent(root_path('/Config/core.php'),$config);
+
+    $arr=DevTools::getDatabaseConfig();
+
+
+    if (count($arr)<1) {
+      $bodyTrim=DevTools::findCode($config,$start_id,$end_id,false,false);
+      $config=str_replace($bodyTrim['code'],"$start_id\n\t\t$end_id",$config);
+      File::putContent(root_path('/Config/core.php'),$config);
+    }
+
     return  $config;
   }
 
   public function addDatabaseConfig($main_key,$array){
-    $str="\t".'$'."config['".$main_key."']=\n\t\t[";
+    $str="".'$'."config['".$main_key."']=\t\t[";
     $temparr=[];
     foreach ($array as $key => $value) {
       if ($key=='db_host_port'|| $key=='result_stdClass') {
@@ -204,37 +219,33 @@ class DevTools{
 
   public function findInsideCode($text,$start,$end,$trimAll=true,$trim=false)
   {
-    $index_func_start=strpos($text,$start)+strlen($start);
-    $index_func_end=strpos($text,$end);
-
-    $to=$index_func_end-$index_func_start;
-    if ($to<0) {
-      $text=substr($text,$index_func_start);
-      $to=strpos($text,$end);
-      $code=substr($text,0,$to);
-    }
-    else {
-      $code=substr($text,$index_func_start,$to);
-    }
-
-    if ($trimAll) {
-      $code=preg_replace('/\s+/', '', $code);
-    }
-    if ($trim) {
-      $code=trim($code);
-    }
-    return ['code'=>$code,'start'=>$index_func_start,'end'=>$index_func_end,'dif'=>$to];
+    return DevTools::findCode($text,$start,$end,$trimAll,false,true);
   }
 
-  public function findCode($text,$start,$end,$trimAll=true,$trim=false)
+  public function findCode($text,$start,$end,$trimAll=true,$trim=false,$inside=false)
   {
     $index_func_start=strpos($text,$start);
-    $index_func_end=strpos($text,$end)+1;
+    $index_func_end=strpos($text,$end);
+
+    if ($inside==true) {
+      $index_func_start+=strlen($start);
+    }
+    else {
+      $index_func_end+=strlen($end);
+    }
 
     $to=$index_func_end-$index_func_start;
+
+
+
     if ($to<0) {
       $text=substr($text,$index_func_start);
       $to=strpos($text,$end);
+
+      if ($inside==false) {
+        $to+=strlen($end);;
+      }
+
       $code=substr($text,0,$to);
     }
     else {
