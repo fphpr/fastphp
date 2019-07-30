@@ -189,6 +189,9 @@ class dev_toolsController
           return['ok'=>true];
         break;
 
+        case 'edit':
+          return DevTools::editDatabaseConfig(post('main_key'),post('key'),post('params'));
+        break;
         default:
           // code...
           break;

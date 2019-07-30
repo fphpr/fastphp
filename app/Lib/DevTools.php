@@ -200,7 +200,12 @@ class DevTools{
   }
 
   public function addDatabaseConfig($main_key,$array){
-    $str="".'$'."config['".$main_key."']=\t\t[";
+    $temparr=DevTools::getPhpArrayText($array);
+    return DevTools::addDatabaseConfigStr(DevTools::getPhpConfigStr('config',$main_key,$temparr));
+  }
+
+  public function getPhpArrayText($array)
+  {
     $temparr=[];
     foreach ($array as $key => $value) {
       if ($key=='db_host_port'|| $key=='result_stdClass') {
@@ -211,8 +216,35 @@ class DevTools{
       }
 
     }
-    $str=$str.implode(' , ',$temparr)." \n\t\t ];";
-    return DevTools::addDatabaseConfigStr($str);
+    return implode(' , ',$temparr);
+  }
+
+  public function getPhpConfigStr($name,$key,$str)
+  {
+    $str="".'$'."$name"."['".$key."']=[$str \n\t\t ];";
+    return $str;
+  }
+
+  public function editDatabaseConfig($main_key,$edit_key,$array){
+    $configs=DevTools::getDatabaseConfig();
+    $core=DevTools::readConfig();
+    $start_id = '//start=>database-config' ;
+    $end_id   = '//end=>database-config'   ;
+    $MainCode=DevTools::findInsideCode($core,$start_id,$end_id,false,true);
+
+    foreach ($configs as $key => $config) {
+      if ($main_key==$key) {
+         $find= DevTools::findCode($MainCode['code'],'$config['."'$main_key']",';',false,false);
+         if (! isset($array['password'])) {
+           $array['password']=$config->password;
+         }
+         $new=DevTools::getPhpConfigStr('config',$edit_key, DevTools::getPhpArrayText($array));
+         $core=str_replace($find['code'],$new,$core);
+         File::putContent(root_path('/Config/core.php'),$core);
+         return ['ok'=>true];
+      }
+    }
+    return ['ok'=>false,'msg'=>'config not find in core file'];
   }
 
 

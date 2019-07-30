@@ -5,7 +5,7 @@
 <div class="" style="padding:15px;">
 
   <div class="ui card" style="width: 100%;">
-    <div class="content">
+    <div id="form_add_config" class="content">
       <div id="form" class="ui form">
 
         <div class="three fields">
@@ -85,6 +85,89 @@
         <button onclick="newConfig()" type="button" class="ui button teal" name="button">add database config</button>
       </div>
     </div>
+
+    <div id="form_edit_config" class="content" style="display:none;">
+      <div id="form" class="ui form">
+
+        <div class="three fields">
+          <div class="field">
+            <label>driver</label>
+            <div class="ui selection dropdown">
+              <input type="hidden" name="driver" value="mysql">
+              <i class="dropdown icon"></i>
+              <div class="default text">driver</div>
+              <div class="menu">
+                <div class="item" data-value="mysql">mysql</div>
+              </div>
+            </div>
+          </div>
+
+
+
+          <div class="field" >
+            <label>charset</label>
+            <div class="ui selection dropdown search">
+              <input type="hidden" name="charset" value="utf8mb4">
+              <i class="dropdown icon"></i>
+              <div class="default text">Select charset</div>
+              <div class="menu">
+                <div class="item" data-value="utf8mb4">utf8mb4</div>
+                <div class="item" data-value="utf8">utf8</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="fields">
+              <div class="eleven wide field">
+                <label for="db_host" >database host</label>
+                <input  type="text" name="db_host" value="localhost">
+              </div>
+              <div class="five wide field">
+                <label  for="db_host_port" >host port</label>
+                <input  type="text" name="db_host_port" value="3306">
+
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="four fields">
+
+          <div class="field">
+            <label>config name</label>
+            <input type="text" name="config_name" value="">
+          </div>
+
+
+          <div class="field">
+            <label>database name</label>
+            <input type="text" name="db_name" value="">
+          </div>
+
+          <div class="field">
+            <label>username</label>
+            <input type="text" name="username" value="">
+          </div>
+
+          <div class="field">
+            <label>password</label>
+            <input type="password" name="password" value="">
+          </div>
+
+
+        </div>
+
+
+      </div>
+      <div class="" style="text-align:center;">
+        <button onclick="editConfig()" type="button" class="ui button blue" name="button">edit database config</button>
+        <button onclick="backEdit()" type="button" class="ui button blue" name="button">cancel</button>
+      </div>
+    </div>
+
   </div>
 
 
@@ -103,12 +186,12 @@
             <?php foreach (getVal('configs') as $key => $config): ?>
               <?php $count++; ?>
 
-              <tr data-id="<?= $key ?>"  >
+              <tr data-id="<?= $key ?>" data-driver="<?=$config->driver ?>" data-charset="<?=$config->charset ?>" data-db_host="<?=$config->db_host ?>" data-db_host_port="<?=$config->db_host_port ?>"  data-db_name="<?=$config->db_name ?>" data-username="<?=$config->username ?>"  >
                 <td ><?php echo "$key "; if($count==1)echo '<b style="color:blue;">(main)</b>'; ?></td>
                 <td ><?=$config->db_name ?></td>
                 <td ><?=$config->username ?></td>
                 <td >
-                  <button class="ui button icon blue" type="button" name="button"> <i class="edit icon" ></i> </button>
+                  <button onclick="edit($(this))" class="ui button icon blue" type="button" name="button"> <i class="edit icon" ></i> </button>
                   <button onclick="deleteMSG($(this))" class="ui button icon orange" type="button" name="button"> <i class="remove icon" ></i> </button>
                 </td>
               </tr>
@@ -174,6 +257,64 @@
     sendPost('<?= url('/dev-tools/data-base/config/delete') ?>',{
       key:key
     },function (get) {
+      if (get.ok) {
+        loading(true);
+        location.reload();
+      }
+      else {
+        msg_box({
+          text:get.msg
+        })
+      }
+    })
+  }
+
+  function edit(ob) {
+    tr=ob.closest('tr');
+    console.log('edit');
+    $('#form_edit_config .form').form('set values',{
+      driver:tr.data('driver'),
+      charset:tr.data('charset'),
+      db_host:tr.data('db_host'),
+      db_host_port:tr.data('db_host_port'),
+      config_name:tr.data('id'),
+      db_name:tr.data('db_name'),
+      username:tr.data('username'),
+      password:'',
+    });
+
+    $('#form_edit_config').data('main_key',tr.data('id')).css('display','');
+    $('#form_add_config').css('display','none');
+  }
+
+  function backEdit() {
+    $('#form_edit_config').css('display','none');
+    $('#form_add_config').css('display','');
+  }
+
+  function editConfig() {
+    get_params=$('#form_edit_config .form').form('get values');
+    params={
+      driver:get_params.driver,
+      db_host:get_params.db_host,
+      db_host_port:get_params.db_host_port,
+      db_name:get_params.db_name,
+      username:get_params.username,
+      //password:get_params.password,
+      charset:get_params.charset,
+      result_stdClass:true,
+    };
+    if (get_params.password!=null && get_params.password!='') {
+      params['password']=get_params.password;
+    }
+    console.log(get_params);
+    sendPost('<?= url('/dev-tools/data-base/config/edit') ?>',
+    {
+      params:params,
+      key:get_params.config_name,
+      main_key:$('#form_edit_config').data('main_key')
+    }
+    ,function (get) {
       if (get.ok) {
         loading(true);
         location.reload();
