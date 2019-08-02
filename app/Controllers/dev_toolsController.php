@@ -33,16 +33,34 @@ class dev_toolsController
 
   }
 
-  public function migrationAction($value='')
+  public function migrationAction()
   {
-    return DevTools::view('migration',[]);
+    $configs=DevTools::getDatabaseConfig();
+    $getFirstConfigKey=DB::getFirstConfigKey();
+    $migration_files= Migration::getFiles();
+
+    return DevTools::view('migration',['configs'=>$configs,'FirstConfigKey'=>$getFirstConfigKey,'migrations'=>$migration_files]);
   }
-  public function migration_manageAction($value='')
+  public function migration_manageAction()
   {
+    $action=post('type',null);
+    if ($action=='build') {
+      Migration::build_from_db(post('db_config'));
+    }
+    elseif ($action=='run') {
+      return Migration::run_migrate(post('db_config'),post('time'));
+    }
+    elseif ($action=='reset') {
+      Migration::run_migrate(post('db_config'),post('time'),true);
+    }
+    elseif ($action=='delete') {
+      Migration::delete(post('db_config'),post('time'),true);
+    }
+    return['ok'=>true,'action'=>$action];
   }
 
 
-  public function settingsAction($value='')
+  public function settingsAction()
   {
     $params = DevTools::getValuesIndex(['Developer_Two_Token','DomainName','DEBUG=','DEBUG_FILE_LOG=','$RUN_CONFIG_CORE=','SUPPORT_COMPOSER=','DEBUG_TOKEN='],true);
     return DevTools::view('setting',['params'=>$params]);
@@ -192,9 +210,7 @@ class dev_toolsController
         case 'edit':
           return DevTools::editDatabaseConfig(post('main_key'),post('key'),post('params'));
         break;
-        default:
-          // code...
-          break;
+
       }
     }
   }

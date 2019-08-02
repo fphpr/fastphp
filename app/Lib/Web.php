@@ -330,7 +330,7 @@ class DB
    * @param  array  $params query params
    * @return array
    */
-  public static function select($query,$params=[])
+  public static function select($query,$params=null)
   {
     return DB::execute($query,$params,true);
   }
@@ -340,7 +340,7 @@ class DB
    * @param  array  $params query params
    * @return stdClass or false(bool)   return first result
    */
-  public static function getOne($query,$params=[])
+  public static function getOne($query,$params=null)
   {
     return DB::mainDB()->getOne($query,$params);
   }
@@ -349,7 +349,7 @@ class DB
   * @param  string $query   sql query
   * @param  array  $params query params
   */
-  public static function update($query,$params=[])
+  public static function update($query,$params=null)
   {
     DB::execute($query,$params,false);
   }
@@ -358,7 +358,7 @@ class DB
   * @param  string $query   sql query
   * @param  array  $params query params
   */
-  public static function insert($query,$params=[])
+  public static function insert($query,$params=null)
   {
     DB::execute($query,$params,false);
   }
@@ -367,7 +367,7 @@ class DB
   * @param  string $query   sql query
   * @param  array  $params query params
   */
-  public static function delete($query,$params=[])
+  public static function delete($query,$params=null)
   {
     DB::execute($query,$params,false);
   }
@@ -378,7 +378,7 @@ class DB
   * @param  array  $params query params
   * @param  bool  $return for receive result query
   */
-  public static function execute($query,$params,$return=false)
+  public static function execute($query,$params=null,$return=false)
   {
     return DB::mainDB()->execute($query,$params,$return);
 
@@ -405,7 +405,7 @@ class DB
    * get First Config Key in $db_config
    * @return string
    */
-  private static function getFirstConfigKey()
+  public static function getFirstConfigKey()
   {
     return key(DB::$db_config);
   }
