@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.6 beta';
+CONST  VER='1.1.7 beta';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -418,6 +418,7 @@ class DB
  */
   private static function initOnceDB($key)
   {
+
     if (!isset( DB::$db_config[$key]['db'])) {
       $query=new query;
       DB::$db_config[$key]['db']=$query->set(DB::$db_config[$key]);
@@ -442,6 +443,7 @@ class DB
 class query{
   private $db;
   private $isConnect=false;
+  private $config=null;
 
   public function set($config)
   {
@@ -449,6 +451,7 @@ class query{
     $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     $this->setSelectResultType(! $config['result_stdClass']);
     $this->db=$db;
+    $this->config=$config;
     $this->isConnect=true;
     return $this;
   }
@@ -511,9 +514,13 @@ class query{
     }
   }
 
-  public function cleenBackup()
+  public function cleenBackup($dir='')
   {
-    File::delete_dir(__DIR__."/../Other/framework/database/backup");
+    File::delete_dir($this->database_path("/backup$dir"));
+
+  }
+  public function database_path($dir=''){
+    return root_path("/Other/framework/database$dir");
   }
 
   public function backup_table($tb_name,$path=null)
@@ -521,7 +528,7 @@ class query{
     set_time_limit(0);
     $date=date('Y-m-d_H_i_s');
     $dm=date('Y_m_d');
-    $dir=__DIR__."/../Other/framework/database/backup/$dm";
+    $dir=$this->database_path("/backup/$dm");
     mkdir($dir,0777, true);
     $dir=realpath($dir);
     $filename=$dir.'/'.$tb_name."_$date.sql";
@@ -535,14 +542,15 @@ class query{
     set_time_limit(0);
     $date=date('Y-m-d_H_i_s');
     $dm=date('Y_m_d');
-    $dir=__DIR__."/../Other/framework/database/backup/$dm/";
+    $dir=$this->database_path("/backup/$dm/");
 
     mkdir($dir,0777, true);
 
-    $dbhost=DB::$host;
-    $dbname=DB::$db_name;
-    $dbuser=DB::$username;
-    $dbpass=DB::$password;
+
+    $dbhost=$this->config['db_host'];
+    $dbname=$this->config['db_name'];
+    $dbuser=$this->config['username'];
+    $dbpass=$this->config['password'];
 
     if ($path==null) {
       $filename=$dir.$name.$date.".sql";
@@ -551,10 +559,9 @@ class query{
       $filename=$path;
     }
 
-    $command = "mysqldump --opt -h $dbhost -u$dbuser -p$dbpass $dbname > $filename";
-
+    $command = "mysqldump --opt -h$dbhost -u$dbuser -p$dbpass $dbname > $filename";
     system($command);
-    return true;
+    return ['ok'=>true,'file_name'=>$filename];
   }
 
 }

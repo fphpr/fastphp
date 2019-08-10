@@ -1,0 +1,64 @@
+<div class="page-title" style="">
+  <h3>Backup</h3>
+</div>
+
+<div class="" style="padding:15px;">
+
+  <div class="ui cards centered">
+    <div class=" card">
+      <div class="content">
+
+        <div id="select_db_config" class="ui selection dropdown" style="width: 100%;">
+          <input type="hidden" name="" value="<?= getVal('FirstConfigKey') ?>">
+          <i class="dropdown icon"></i>
+          <div class="default text">Select a Database</div>
+          <div class="menu">
+            <?php foreach (getVal('configs') as $key => $config): ?>
+              <div class="item" data-value="<?=$key ?>"><?=$config->db_name ?></div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+
+        <div class="header" style="margin-top: 15px;">
+          New Backup
+        </div>
+
+        <div class="description">
+          <div class="">
+            Create database Backup
+          </div>
+
+          <div class="ui input" style="width: 100%;">
+            <input id="cname" type="text" name="" value="" placeholder="Custom file name (optional)">
+          </div>
+
+        </div>
+      </div>
+
+      <div class="extra content">
+        <div class="ui two buttons">
+          <div class="ui basic green button" onclick="Backup()" >Backup</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script type="text/javascript">
+function Backup() {
+  sendPost('<?=url('/dev-tools/backup-manage') ?>',{
+    action:'new',
+    db_config:$('#select_db_config').dropdown('get value'),
+    cname:$('#cname').val()
+  },function (get) {
+    if (get.ok) {
+
+    }
+  })
+
+}
+  $('.ui.dropdown').dropdown();
+</script>

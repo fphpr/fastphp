@@ -6,7 +6,7 @@
 *
 */
 
-CONST DomainName='';
+CONST DomainName='localhost';
 CONST Developer_Username='admin';
 CONST Developer_Password='123456';
 CONST Developer_Two_Token='';
@@ -33,7 +33,7 @@ CONST DEBUG_TOKEN='fphp';
 * execution function run befor controller load
 * You Can Init DataBase Connection Or load Other Setting
 */
-$RUN_CONFIG_CORE=false;
+$RUN_CONFIG_CORE=true;
 
 /*
 * => To support the Composer uncomment this line \/
@@ -44,6 +44,12 @@ CONST SUPPORT_COMPOSER=false;
 * show execute code time
 */
 CONST RUN_TIME=true;
+
+CONST timezone_set='false';
+
+if (timezone_set !='false') {
+  date_default_timezone_set(timezone_set);
+}
 
 CONST ECHO_RUN_TIME=false;
 if(RUN_TIME){define("TIME_START", microtime(true));}

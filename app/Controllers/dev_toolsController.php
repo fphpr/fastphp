@@ -62,8 +62,9 @@ class dev_toolsController
 
   public function settingsAction()
   {
-    $params = DevTools::getValuesIndex(['Developer_Two_Token','DomainName','DEBUG=','DEBUG_FILE_LOG=','$RUN_CONFIG_CORE=','SUPPORT_COMPOSER=','DEBUG_TOKEN='],true);
-    return DevTools::view('setting',['params'=>$params]);
+    $params = DevTools::getValuesIndex(['Developer_Two_Token','DomainName','DEBUG=','DEBUG_FILE_LOG=','$RUN_CONFIG_CORE=','SUPPORT_COMPOSER=','DEBUG_TOKEN=','timezone_set='],true);
+    $timezone = timezone_identifiers_list();
+    return DevTools::view('setting',['params'=>$params,'timezone'=>$timezone]);
   }
   public function setting_manageAction()
   {
@@ -190,10 +191,7 @@ class dev_toolsController
   {
     # config page
     if (count($url)==3) {
-      $timezone = timezone_identifiers_list();
-      //$config_count=count(DB::getConfig());
       $configs= DevTools::getDatabaseConfig();
-
       return DevTools::view('db_config',['configs'=>$configs,'timezone'=>$timezone]);
     }
     else {
@@ -212,6 +210,22 @@ class dev_toolsController
         break;
 
       }
+    }
+  }
+
+  public function backupAction()
+  {
+    $configs= DevTools::getDatabaseConfig();
+    $getFirstConfigKey=DB::getFirstConfigKey();
+    return DevTools::view('db_backup',['configs'=>$configs,'FirstConfigKey'=>$getFirstConfigKey]);
+  }
+
+  public function backup_manageAction( )
+  {
+    $action=post('action',null);
+    if ($action=='new') {
+      DB::in(post('db_config'))->backup(post('cname',''));
+      return['ok'=>true];
     }
   }
 

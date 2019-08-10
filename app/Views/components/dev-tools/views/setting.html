@@ -9,7 +9,6 @@
   <div class="ui horizontal divider" >Public</div>
 
   <div class="ui cards centered" >
-
     <div class="card" data-param="$RUN_CONFIG_CORE" data-value="<?= getVal('params')['$RUN_CONFIG_CORE'] ?>">
       <div class="content">
         <div class="header">
@@ -44,7 +43,35 @@
 
   </div>
 
+<div class="ui cards centered">
+  <div class="card" data-param="$RUN_CONFIG_CORE" data-value="<?= getVal('params')['$RUN_CONFIG_CORE'] ?>">
+    <div class="content">
+      <div class="header">
+        Set TimeZone
+      </div>
+      <div class="meta"></div>
 
+      <div id="select_timezone" class="ui selection search dropdown" style="margin-top: 4px;width: 100%;">
+        <input type="hidden" value="<?=getVal('params')['timezone_set'] ?>">
+        <i class="dropdown icon"></i>
+        <div class="default text"></div>
+        <div class="menu">
+          <div class="item" data-value="false">default</div>
+
+          <?php foreach (getVal('timezone') as $key => $timezone): ?>
+            <div class="item" data-value="<?=$timezone ?>"><?=$timezone ?></div>
+          <?php endforeach; ?>
+
+        </div>
+      </div>
+    </div>
+    <div class="extra content" style="">
+
+      <button onclick="saveTimeZone()" style="margin-right: 0px;margin-left: auto;" type="button" class="ui button green" name="button">save</button>
+
+    </div>
+  </div>
+</div>
 
 
 <div class="ui horizontal divider" style="margin-top: 25px;">Security</div>
@@ -183,7 +210,7 @@
       }
       value=card.data('value');
       to=$(this).closest('.checkbox').checkbox('is checked');
-      console.log(param,value,);
+      console.log(param,value,to);
       changeSettings('check',param,to);
     }
   });
@@ -228,4 +255,12 @@
     value="'"+value+"'";
     changeSettings('string','DomainName',value);
   }
+
+  function saveTimeZone() {
+    value=$('#select_timezone').dropdown('get value');
+    value="'"+value+"'";
+    changeSettings('string','timezone_set',value);
+  }
+  $('.ui.dropdown').dropdown();
+
 </script>
