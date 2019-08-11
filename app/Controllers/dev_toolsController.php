@@ -36,6 +36,10 @@ class dev_toolsController
   public function migrationAction()
   {
     $configs=DevTools::getDatabaseConfig();
+    if (count($configs)<1) {
+      Redirect(url('/dev-tools/data-base/config'),303,true);
+    }
+    
     $getFirstConfigKey=DB::getFirstConfigKey();
     $migration_files= Migration::getFiles();
 
@@ -133,7 +137,7 @@ class dev_toolsController
       return['ok'=>true];
     }
     else {
-      return['ok'=>false];
+      return['ok'=>false,'msg'=>lang('msg.error_pass')];
     }
   }
 
@@ -216,6 +220,9 @@ class dev_toolsController
   public function backupAction()
   {
     $configs= DevTools::getDatabaseConfig();
+    if (count($configs)<1) {
+      Redirect(url('/dev-tools/data-base/config'),303,true);
+    }
     $getFirstConfigKey=DB::getFirstConfigKey();
     return DevTools::view('db_backup',['configs'=>$configs,'FirstConfigKey'=>$getFirstConfigKey]);
   }

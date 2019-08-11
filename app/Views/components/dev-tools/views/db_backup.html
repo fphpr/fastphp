@@ -55,7 +55,14 @@ function Backup() {
     cname:$('#cname').val()
   },function (get) {
     if (get.ok) {
-
+      msg_box({
+        text:'Done Successfully'
+      });
+    }
+    else {
+      msg_box({
+        text:get.msg
+      });
     }
   })
 

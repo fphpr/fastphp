@@ -156,7 +156,13 @@ function include_file($file){
   }
 }
 
-function Redirect($url='',$die=true){header("Location: $url");if($die)die();}
+function Redirect($url='',$statusCode=303,$no_cache=false,$die=true){
+  if ($no_cache) {
+    header('Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+    header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+  }
+  header("Location: $url",true, $statusCode);if($die)die();
+}
 function GenerateToken($len=16){return bin2hex(openssl_random_pseudo_bytes($len));}
 function ReturnData($data){
   if(is_array($data) || is_object($data))
