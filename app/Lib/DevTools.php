@@ -16,6 +16,11 @@ class DevTools{
     return File::readFile('index.php');
   }
 
+  public function readConfig()
+  {
+    return File::readFile(root_path('/Config/core.php'));
+  }
+
   public function changeValueIndex($content,$newContent)
   {
     $index=DevTools::readIndex();
@@ -124,5 +129,167 @@ class DevTools{
     else {
       return['ok'=>false,'msg'=>lang('msg.error_pass')];
     }
+  }
+
+  public function getDatabaseConfig()
+  {
+    $start_id = '//start=>database-config' ;
+    $end_id   = '//end=>database-config'   ;
+
+    $config=DevTools::readConfig();
+    $MainCode=DevTools::findInsideCode($config,$start_id,$end_id,false,true);
+
+    $arr=[];
+    while (strpos($MainCode['code'],'$config')>-1) {
+      $first=DevTools::findCode($MainCode['code'],'$config',';',false,true);
+
+      $key=DevTools::findInsideCode($first['code'],'[',']',false,true);
+      $key=str_replace("'",'',$key['code']);
+      $key=str_replace('"','',$key);
+
+      $first_temp= DevTools::findInsideCode($first['code'],'=',';');
+      $first_temp= DevTools::findInsideCode($first_temp['code'],'[',']');
+      $array='{'.$first_temp['code'].'}';
+      $array=str_replace('=>',':',$array);
+      $array=str_replace("'",'"',$array);
+
+      $MainCode['code']=str_replace($first['code'],'',$MainCode['code']);
+      $arr[$key]= json_decode( $array);
+    }
+
+    return $arr;
+  }
+
+  public function addDatabaseConfigStr($str)
+  {
+    $end_id   = '//end=>database-config'   ;
+    $config=DevTools::readConfig();
+
+    $config=str_replace($end_id," $str \n \t\t\t$end_id",$config);
+    File::putContent(root_path('/Config/core.php'),$config);
+    return  $config;
+  }
+
+  public function removeDatabaseConfig($key)
+  {
+    $start_id = '//start=>database-config' ;
+    $end_id   = '//end=>database-config'   ;
+
+    $config=DevTools::readConfig();
+    $MainCode=DevTools::findInsideCode($config,$start_id,$end_id,false,true);
+
+    $find= DevTools::findCode($MainCode['code'],'$config['."'$key']",';',false,false);
+
+    $config=str_replace($find['code'],"",$config);
+
+
+    //$config=str_replace($config,"",$config);
+
+    File::putContent(root_path('/Config/core.php'),$config);
+
+    $arr=DevTools::getDatabaseConfig();
+
+
+    if (count($arr)<1) {
+      $bodyTrim=DevTools::findCode($config,$start_id,$end_id,false,false);
+      $config=str_replace($bodyTrim['code'],"$start_id\n\t\t$end_id",$config);
+      File::putContent(root_path('/Config/core.php'),$config);
+    }
+
+    return  $config;
+  }
+
+  public function addDatabaseConfig($main_key,$array){
+    $temparr=DevTools::getPhpArrayText($array);
+    return DevTools::addDatabaseConfigStr(DevTools::getPhpConfigStr('config',$main_key,$temparr));
+  }
+
+  public function getPhpArrayText($array)
+  {
+    $temparr=[];
+    foreach ($array as $key => $value) {
+      if ($key=='db_host_port'|| $key=='result_stdClass') {
+        $temparr[]="\n\t\t\t '$key'=>$value";
+      }
+      else {
+        $temparr[]="\n\t\t\t '$key'=>'$value'";
+      }
+
+    }
+    return implode(' , ',$temparr);
+  }
+
+  public function getPhpConfigStr($name,$key,$str)
+  {
+    $str="".'$'."$name"."['".$key."']=[$str \n\t\t ];";
+    return $str;
+  }
+
+  public function editDatabaseConfig($main_key,$edit_key,$array){
+    $configs=DevTools::getDatabaseConfig();
+    $core=DevTools::readConfig();
+    $start_id = '//start=>database-config' ;
+    $end_id   = '//end=>database-config'   ;
+    $MainCode=DevTools::findInsideCode($core,$start_id,$end_id,false,true);
+
+    foreach ($configs as $key => $config) {
+      if ($main_key==$key) {
+         $find= DevTools::findCode($MainCode['code'],'$config['."'$main_key']",';',false,false);
+         if (! isset($array['password'])) {
+           $array['password']=$config->password;
+         }
+         $new=DevTools::getPhpConfigStr('config',$edit_key, DevTools::getPhpArrayText($array));
+         $core=str_replace($find['code'],$new,$core);
+         File::putContent(root_path('/Config/core.php'),$core);
+         return ['ok'=>true];
+      }
+    }
+    return ['ok'=>false,'msg'=>'config not find in core file'];
+  }
+
+
+
+  public function findInsideCode($text,$start,$end,$trimAll=true,$trim=false)
+  {
+    return DevTools::findCode($text,$start,$end,$trimAll,false,true);
+  }
+
+  public function findCode($text,$start,$end,$trimAll=true,$trim=false,$inside=false)
+  {
+    $index_func_start=strpos($text,$start);
+    $index_func_end=strpos($text,$end);
+
+    if ($inside==true) {
+      $index_func_start+=strlen($start);
+    }
+    else {
+      $index_func_end+=strlen($end);
+    }
+
+    $to=$index_func_end-$index_func_start;
+
+
+
+    if ($to<0) {
+      $text=substr($text,$index_func_start);
+      $to=strpos($text,$end);
+
+      if ($inside==false) {
+        $to+=strlen($end);;
+      }
+
+      $code=substr($text,0,$to);
+    }
+    else {
+      $code=substr($text,$index_func_start,$to);
+    }
+
+    if ($trimAll) {
+      $code=preg_replace('/\s+/', '', $code);
+    }
+    if ($trim) {
+      $code=trim($code);
+    }
+    return ['code'=>$code,'start'=>$index_func_start,'end'=>$index_func_end,'dif'=>$to];
   }
 }

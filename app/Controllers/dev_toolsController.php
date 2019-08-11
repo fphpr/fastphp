@@ -7,6 +7,7 @@ use App\Web\File;
 use App\Web\Session;
 use App\DevTools;
 use App\Migration;
+use App\web\DB;
 
 class dev_toolsController
 {
@@ -32,19 +33,42 @@ class dev_toolsController
 
   }
 
-  public function migrationAction($value='')
+  public function migrationAction()
   {
-    return DevTools::view('migration',[]);
+    $configs=DevTools::getDatabaseConfig();
+    if (count($configs)<1) {
+      Redirect(url('/dev-tools/data-base/config'),303,true);
+    }
+    
+    $getFirstConfigKey=DB::getFirstConfigKey();
+    $migration_files= Migration::getFiles();
+
+    return DevTools::view('migration',['configs'=>$configs,'FirstConfigKey'=>$getFirstConfigKey,'migrations'=>$migration_files]);
   }
-  public function migration_manageAction($value='')
+  public function migration_manageAction()
   {
+    $action=post('type',null);
+    if ($action=='build') {
+      Migration::build_from_db(post('db_config'));
+    }
+    elseif ($action=='run') {
+      return Migration::run_migrate(post('db_config'),post('time'));
+    }
+    elseif ($action=='reset') {
+      Migration::run_migrate(post('db_config'),post('time'),true);
+    }
+    elseif ($action=='delete') {
+      Migration::delete(post('db_config'),post('time'),true);
+    }
+    return['ok'=>true,'action'=>$action];
   }
 
 
-  public function settingsAction($value='')
+  public function settingsAction()
   {
-    $params = DevTools::getValuesIndex(['Developer_Two_Token','DomainName','DEBUG=','DEBUG_FILE_LOG=','$RUN_CONFIG_CORE=','SUPPORT_COMPOSER=','DEBUG_TOKEN='],true);
-    return DevTools::view('setting',['params'=>$params]);
+    $params = DevTools::getValuesIndex(['Developer_Two_Token','DomainName','DEBUG=','DEBUG_FILE_LOG=','$RUN_CONFIG_CORE=','SUPPORT_COMPOSER=','DEBUG_TOKEN=','timezone_set='],true);
+    $timezone = timezone_identifiers_list();
+    return DevTools::view('setting',['params'=>$params,'timezone'=>$timezone]);
   }
   public function setting_manageAction()
   {
@@ -113,7 +137,7 @@ class dev_toolsController
       return['ok'=>true];
     }
     else {
-      return['ok'=>false];
+      return['ok'=>false,'msg'=>lang('msg.error_pass')];
     }
   }
 
@@ -155,6 +179,63 @@ class dev_toolsController
         break;
     }
   }
+
+  public function data_baseAction()
+  {
+    $url=urlParams();
+
+    switch ($url[2]) {
+      case 'config':
+        return $this->db_config($url);
+      break;
+    }
+  }
+
+  public function db_config($url)
+  {
+    # config page
+    if (count($url)==3) {
+      $configs= DevTools::getDatabaseConfig();
+      return DevTools::view('db_config',['configs'=>$configs,'timezone'=>$timezone]);
+    }
+    else {
+      switch ($url[3]) {
+        case 'add':
+          DevTools::addDatabaseConfig(post('key'),post('params'));
+          return['ok'=>true];
+        break;
+        case 'delete':
+          DevTools::removeDatabaseConfig(post('key'));
+          return['ok'=>true];
+        break;
+
+        case 'edit':
+          return DevTools::editDatabaseConfig(post('main_key'),post('key'),post('params'));
+        break;
+
+      }
+    }
+  }
+
+  public function backupAction()
+  {
+    $configs= DevTools::getDatabaseConfig();
+    if (count($configs)<1) {
+      Redirect(url('/dev-tools/data-base/config'),303,true);
+    }
+    $getFirstConfigKey=DB::getFirstConfigKey();
+    return DevTools::view('db_backup',['configs'=>$configs,'FirstConfigKey'=>$getFirstConfigKey]);
+  }
+
+  public function backup_manageAction( )
+  {
+    $action=post('action',null);
+    if ($action=='new') {
+      DB::in(post('db_config'))->backup(post('cname',''));
+      return['ok'=>true];
+    }
+  }
+
 
 
 

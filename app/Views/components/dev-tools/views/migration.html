@@ -4,9 +4,24 @@
 
 <div class="" style="padding:15px;">
 
+
+
   <div class="ui cards centered">
     <div class=" card">
       <div class="content">
+        <div  style="text-align: center;padding-bottom: 15px;">
+          <div id="select_db_config" class="ui selection dropdown" style="width: 100%;">
+            <input type="hidden" name="" value="<?= getVal('FirstConfigKey') ?>">
+            <i class="dropdown icon"></i>
+            <div class="default text">Select a Database</div>
+            <div class="menu">
+              <?php foreach (getVal('configs') as $key => $config): ?>
+                <div class="item" data-value="<?=$key ?>"><?=$config->db_name ?></div>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        </div>
+
         <div class="header">
           Build
         </div>
@@ -18,43 +33,7 @@
 
       <div class="extra content">
         <div class="ui two buttons">
-          <div class="ui basic green button">Build</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="ui card">
-      <div class="content">
-        <div class="header">
-          Run
-        </div>
-
-        <div class="description">
-          Create Databace Tables From Migrations Files
-        </div>
-      </div>
-
-      <div class="extra content">
-        <div class="ui two buttons">
-          <div class="ui basic green button">Create Tables</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="ui card">
-      <div class="content">
-        <div class="header">
-          Reset
-        </div>
-
-        <div class="description">
-          Drop Tables From DataBase And Run Migration
-        </div>
-      </div>
-
-      <div class="extra content">
-        <div class="ui two buttons">
-          <div class="ui basic green button">Create Tables</div>
+          <div class="ui basic green button" onclick="build()" >Build</div>
         </div>
       </div>
     </div>
@@ -62,4 +41,151 @@
   </div>
 
 
+  <div class="" style="margin-top: 16px;">
+    <table class="ui celled table">
+      <thead>
+        <tr>
+          <th>Database</th>
+          <th>Date Time</th>
+          <th>*</th>
+          <th>action</th>
+        </tr>
+      </thead>
+        <tbody>
+          <?php $count=0; ?>
+          <?php foreach (getVal('migrations') as $key => $config): ?>
+            <?php $count++; ?>
+
+            <tr data-index="<?= $key ?>" data-name="<?= $config['name'] ?>" data-key="<?= $config['key'] ?>" data-time="<?= $config['time'] ?>"   >
+              <td ><?=$count.') '. $config['name'] ?></td>
+              <td ><?= $config['datetime'] ?></td>
+              <td ><?=$config['time'] ?></td>
+              <td >
+                <button onclick="run($(this))" class="ui button icon blue" type="button" name="button" data-content="Create Databace Tables" > <i class="play icon" ></i> </button>
+                <button onclick="reset_msg($(this))" class="ui button icon blue" type="button" name="button" data-content="Drop Tables From DataBase And Run Migration" > <i class="sync icon" ></i> </button>
+                <button onclick="delete_files_msg($(this))" class="ui button icon orange" type="button" name="button" data-content="Delete Migration Files"> <i class="remove icon" ></i> </button>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+
+
+        </tbody>
+      </table>
+  </div>
+
+
 </div>
+
+
+<script type="text/javascript">
+  $('button').popup();
+  function build() {
+    select_db_config=$('#select_db_config').dropdown('get value');
+    sendPost('<?= url('/dev-tools/migration-manage') ?>',{
+      type:'build',
+      db_config:select_db_config
+    },
+  function (get) {
+    if (get.ok) {
+      loading(true);
+      location.reload()
+    }
+    else {
+      msg_box({
+        text:get.msg
+      })
+    }
+  });
+  }
+  function run(ob) {
+    tr=ob.closest('tr');
+
+    sendPost('<?= url('/dev-tools/migration-manage') ?>',{
+      type:'run',
+      db_config:tr.data('key'),
+      time:tr.data('time'),
+    },
+  function (get) {
+    if (get.ok) {
+      msg_box({
+        text:'Done Successfully'
+      })
+    }
+    else {
+      msg_box({
+        text:get.msg
+      })
+    }
+  });
+  }
+  function reset(data) {
+    sendPost('<?= url('/dev-tools/migration-manage') ?>',data,
+    function (get) {
+      if (get.ok) {
+        msg_box({
+          text:'Done Successfully'
+        })
+      }
+      else {
+        msg_box({
+          text:get.msg
+        })
+      }
+    });
+  }
+
+  function delete_files(data) {
+
+    sendPost('<?= url('/dev-tools/migration-manage') ?>',data,
+    function (get) {
+      if (get.ok) {
+        loading(true);
+        location.reload()
+      }
+      else {
+        msg_box({
+          text:get.msg
+        })
+      }
+    });
+  }
+  $('.ui.dropdown').dropdown();
+
+  function delete_files_msg(ob) {
+    tr=ob.closest('tr');
+
+    msg=msg_box({
+      text:'Deleted '+tr.data('name')+' Migration Files : '+tr.data('time')+' ?',
+      callback_text:'delete',
+      close_text:'close',
+      data:{
+        type:'delete',
+        db_config:tr.data('key'),
+        time:tr.data('time'),
+      },
+      callback:function (data) {
+        msg_box('hide')
+        delete_files(msg.data('value'))
+      }
+    })
+  }
+
+  function reset_msg(ob) {
+    tr=ob.closest('tr');
+
+    msg=msg_box({
+      text:'Drop All Tables Data in '+tr.data('name')+' ?',
+      callback_text:'reset',
+      close_text:'close',
+      data:{
+        type:'reset',
+        db_config:tr.data('key'),
+        time:tr.data('time'),
+      },
+      callback:function (data) {
+        msg_box('hide')
+        reset(msg.data('value'))
+      }
+    })
+  }
+</script>
