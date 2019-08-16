@@ -577,6 +577,7 @@ class query{
 class queryBuilder{
   public $arr=[];
   public $arr_values=[];
+  public $arr_params=[];
   public $values_count=0;
 
   public $tb_name;
@@ -588,7 +589,50 @@ class queryBuilder{
     $this->db=$db;
   }
 
+  /*public function insert($params=[])
+  {
+    $fields=[];
+    $values=[];
+    $tb_name=$this->getTableName();
 
+    foreach ($params as $key => $value) {
+      $fields[]="`$key`";
+      $values[]=":$key";
+      $this->arr_values[$key]=$value;
+    }
+
+    $fields_str=implode(',',$fields);
+    $values_str=implode(',',$values);
+
+    $query="INSERT INTO $tb_name ($fields_str) VALUES ($values_str)";
+    $this->arr[0]=$query;
+    $this->execute();
+  }
+  */
+/*  public function update($params)
+  {
+    $tb_name=$this->getTableName();
+    $fields=[];
+
+    foreach ($params as $key => $value) {
+      $fields[]="`$key` = :$key";
+      $this->arr_values[$key]=$value;
+    }
+
+    $fields=implode(',',$fields);
+
+    $query=" UPDATE $tb_name SET $fields ";
+    $this->arr[0]=$query;
+
+    $this->execute();
+  }*/
+
+  /*public function execute()
+  {
+    echo $this->getSql();
+    echo "<br> ".json_encode($this->arr_values);
+    //$this->db->execute($this->getSql(),$this->arr_values);
+  }*/
 
   public function getTableName()
   {
@@ -603,6 +647,9 @@ class queryBuilder{
 
     foreach ($arr as $key => $value) {
       $str.=$value;
+      if (isset($this->arr_values[$key])) {
+        $this->arr_params=array_merge($this->arr_params,$this->arr_values[$key]);
+      }
     }
 
     return $str;
@@ -614,7 +661,7 @@ class queryBuilder{
  //==================================
 
 
- private function selectInit($select=true,$all=false,$from=false,$where=false)
+ public function selectInit($select=true,$all=false,$from=false,$where=false)
  {
 
    if ($select) {
@@ -644,7 +691,7 @@ class queryBuilder{
        $this->arr[$index_where]=" WHERE ";
      }
    }
-
+   return $this;
  }
 
   public function select($params=null)
@@ -655,23 +702,6 @@ class queryBuilder{
       $this->arr[$index]=" $params ";
     }
     elseif (is_array($params)) {
-
-      foreach($params as $key=> $field){
-        $pos=strpos($field,' ');
-
-        if ($pos > -1 ) {
-          $temp=substr($field,0,$pos);
-
-          $field=substr($field,$pos);
-          $temp="`$temp`";
-
-          $temp.=$field;
-          $params[$key]=$temp;
-        }
-        else {
-          $params[$key]="`$field`";
-        }
-      }
       $params=implode(',',$params);
       $this->arr[$index]=" $params ";
     }
@@ -681,7 +711,6 @@ class queryBuilder{
 
   public function where($name,$val1,$val2=null,$fl="AND")
   {
-
     $value='';
     $op='=';
     if ($val2!=null) {
@@ -692,11 +721,12 @@ class queryBuilder{
       $value=$val1;
     }
 
-    $key=$this->getKeyAndSetValue($name,$value);
+    $key=$this->getKeyAndSetValue($value,'WHERE_STR');
 
-    $this->whereStr("`$name` $op $key ",$fl);
+    $this->whereStr("$name $op $key ",$fl);
     return $this;
   }
+
 
   public function orWhere($name,$val1,$val2=null)
   {
@@ -711,7 +741,7 @@ class queryBuilder{
     $keys=[];
 
     foreach ($params as $k => $val) {
-      $key=$this->getKeyAndSetValue($name,$val);
+      $key=$this->getKeyAndSetValue($val,'WHERE_STR');
       $keys[]=$key;
     }
 
@@ -738,8 +768,8 @@ class queryBuilder{
 
   public function whereBetween($name,$val1,$val2,$fl='AND')
   {
-    $between1=$this->getKeyAndSetValue($name,$val1);
-    $between2=$this->getKeyAndSetValue($name,$val2);
+    $between1=$this->getKeyAndSetValue($val1,'WHERE_STR');
+    $between2=$this->getKeyAndSetValue($val2,'WHERE_STR');
 
     $this->whereStr(" `$name` BETWEEN $between1 AND $between2 ",$fl);
     return $this;
@@ -786,28 +816,28 @@ class queryBuilder{
 
   public function whereMonth($name,$month,$fl='AND')
   {
-    $key=$this->getKeyAndSetValue($name,$month);
+    $key=$this->getKeyAndSetValue($month,'WHERE_STR');
     $this->whereStr(" MONTH(`$name`) = $key ",$fl);
     return $this;
   }
 
   public function whereDay($name,$day,$fl='AND')
   {
-    $key=$this->getKeyAndSetValue($name,$day);
+    $key=$this->getKeyAndSetValue($day,'WHERE_STR');
     $this->whereStr(" DAY(`$name`) = $key ",$fl);
     return $this;
   }
 
   public function whereYear($name,$year,$fl='AND')
   {
-    $key=$this->getKeyAndSetValue($name,$year);
+    $key=$this->getKeyAndSetValue($year,'WHERE_STR');
     $this->whereStr(" YEAR(`$name`) = $key ",$fl);
     return $this;
   }
 
   public function whereTime($name,$time,$fl='AND')
   {
-    $key=$this->getKeyAndSetValue($name,$time);
+    $key=$this->getKeyAndSetValue($time,'WHERE_STR');
     $this->whereStr(" TIME(`$name`) = $key ",$fl);
     return $this;
   }
@@ -864,6 +894,90 @@ class queryBuilder{
     return $this;
   }
 
+  public function inRandomOrder()
+  {
+    $this->orderBy($key,'RAND()');
+    return $this;
+  }
+
+  //==================================
+ //=======/ groupBy Functions \======
+ //==================================
+
+  public function groupBy($name)
+  {
+    $index=$this->SelectSyntaxIndex('GROUP_BY');
+    $this->arr[$index]=" GROUP BY $name ";
+    return $this;
+  }
+
+  //==================================
+  //=======/ union Functions \========
+  //==================================
+
+  public function union($select)
+  {
+    $index=$this->SelectSyntaxIndex('UNION');
+    $qdb=$select->selectInit(true,true,true);
+    $q1=$qdb->getSql();
+    $this->arr[$index]=" UNION $q1";
+
+    foreach ($qdb->arr_values as $key => $value) {
+      $this->arr_values[$key]=array_merge($this->arr_values[$key],$value);
+    }
+    return $this;
+  }
+
+  //==================================
+  //=======/ limits Functions \=======
+  //==================================
+
+  public function limit(int $limit1,int $limit2=null)
+  {
+    $index=$this->SelectSyntaxIndex('LIMIT');
+
+    if ($limit2==null) {
+      $this->arr[$index]=" LIMIT $limit1";
+    }
+    else {
+      $this->arr[$index]=" LIMIT $limit1,$limit2 ";
+    }
+
+    return $this;
+  }
+
+  public function skip(int $skip)
+  {
+    $this->offset($skip);
+    return $this;
+  }
+
+  public function offset(int $offset)
+  {
+    $index=$this->SelectSyntaxIndex('OFFSET');
+    $this->arr[$index].=" OFFSET $offset";
+    return $this;
+  }
+
+  public function take(int $take)
+  {
+    $this->limit($take);
+    return $this;
+  }
+
+  public function having($name,$op,$val1)
+  {
+    $index=$this->SelectSyntaxIndex('HAVING');
+    $this->arr[$index]=" HAVING COUNT($name) $op $val1";
+    return $this;
+  }
+
+  public function duplicate($name,int $count)
+  {
+    $this->groupBy($name)->having($name,">",$count);
+    return $this;
+  }
+
    //==================================
   //=======/ JOIN Functions \=========
   //==================================
@@ -891,41 +1005,72 @@ class queryBuilder{
   }
 
 
-  private function getKeyAndSetValue($name,$value)
+  private function getKeyAndSetValue($value,$indexKey)
   {
+    $index=null;
+    $index=$this->SelectSyntaxIndex($indexKey);
+
     $this->values_count++;
-    $key=":$name".'_'.$this->values_count;
-    $this->arr_values[$key]=$value;
+    $key="?";
+
+    $this->arr_values[$index][]=$value;
+
     return $key;
+  }
+
+
+  public function latest($key='id')
+  {
+    $this->orderBy($key,'DESC');
+    return $this;
+  }
+
+  public function oldest($key='id')
+  {
+    $this->orderBy($key,'ASC');
+    return $this;
+  }
+
+  public function find(int $id)
+  {
+    return $this->where('id',$id)->first();
   }
 
   public function get()
   {
     $this->selectInit(true,true,true);
     $query= $this->getSql();
-
-
-    return $this->db->execute($query,$this->arr_values,true);
+    return $this->db->execute($query,$this->arr_params,true);
+  }
+  
+  public function first()
+  {
+    $this->selectInit(true,true,true);
+    $this->limit(1);
+    $query= $this->getSql();
+    return $this->db->getOne($query,$this->arr_params,true);
   }
 
   public function SelectSyntaxIndex($key=null)
   {
     $arr=[
       'SELECT'=>1,
-      'FIELDS'=>3,
-      'ALL'=>4,
-      'DISTINCT '=>8,
-      'DISTINCTROW'=>10,
-      'HIGH_PRIORITY'=>15,
-      'STRAIGHT_JOIN'=>20,
-      'FROM'=>25,
-      'JOIN'=>28,
-      'WHERE'=>30,
-      'WHERE_STR'=>31,
-      'GROUP_BY'=>35,
-      'HAVING'=>40,
-      'ORDER_BY'=>45,
-      'LIMIT'=>50,
+      'FIELDS'=>2,
+      'ALL'=>3,
+      'DISTINCT '=>4,
+      'DISTINCTROW'=>5,
+      'HIGH_PRIORITY'=>6,
+      'STRAIGHT_JOIN'=>7,
+      'FROM'=>8,
+      'JOIN'=>9,
+      'WHERE'=>10,
+      'WHERE_STR'=>11,
+      'GROUP_BY'=>12,
+      'HAVING'=>13,
+      'ORDER_BY'=>14,
+      'LIMIT'=>15,
+      'OFFSET'=>16,
+      'UNION'=>17
     ];
     if ($key==null) {
       return $arr;
