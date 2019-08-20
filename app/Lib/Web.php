@@ -441,7 +441,6 @@ class DB
   public function table($name)
   {
     $db= DB::mainDB();
-
     $table= new queryBuilder($name,$db);
     return $table;
   }
@@ -451,7 +450,7 @@ class DB
 class query{
   private $db;
   private $isConnect=false;
-  private $config=null;
+  public $config=null;
 
   public function set($config)
   {
@@ -467,6 +466,12 @@ class query{
   public function getPDO()
   {
     return $this->db;
+  }
+
+  public function table($name)
+  {
+    $table= new queryBuilder($name,$this);
+    return $table;
   }
 
   public function lastInsertId()
@@ -589,16 +594,16 @@ class queryBuilder{
     $this->db=$db;
   }
 
-  /*public function insert($params=[])
+  public function insert($params=[])
   {
     $fields=[];
     $values=[];
     $tb_name=$this->getTableName();
 
     foreach ($params as $key => $value) {
-      $fields[]="`$key`";
-      $values[]=":$key";
-      $this->arr_values[$key]=$value;
+      $fields[]="$key";
+      $values[]="?";
+      $this->arr_values[0][]=$value;
     }
 
     $fields_str=implode(',',$fields);
@@ -608,15 +613,24 @@ class queryBuilder{
     $this->arr[0]=$query;
     $this->execute();
   }
-  */
-/*  public function update($params)
+
+  private function updateStr($query)
+  {
+    $tb_name=$this->getTableName();
+
+    $query=" UPDATE $tb_name SET $query ";
+    $this->arr[0]=$query;
+    $this->execute();
+  }
+
+  public function update($params)
   {
     $tb_name=$this->getTableName();
     $fields=[];
 
     foreach ($params as $key => $value) {
-      $fields[]="`$key` = :$key";
-      $this->arr_values[$key]=$value;
+      $fields[]="$key = ?";
+      $this->arr_values[0][]=$value;
     }
 
     $fields=implode(',',$fields);
@@ -625,14 +639,43 @@ class queryBuilder{
     $this->arr[0]=$query;
 
     $this->execute();
-  }*/
+  }
 
-  /*public function execute()
+  public function delete()
   {
-    echo $this->getSql();
-    echo "<br> ".json_encode($this->arr_values);
-    //$this->db->execute($this->getSql(),$this->arr_values);
-  }*/
+    $tb_name=$this->getTableName();
+
+    $query=" DELETE FROM $tb_name ";
+    $this->arr[0]=$query;
+
+    $this->execute();
+  }
+
+  public function truncate()
+  {
+    $query=" TRUNCATE TABLE $tb_name ";
+    $this->arr[0]=$query;
+
+    $this->execute();
+  }
+
+  public function decrement($name,int $value=1)
+  {
+    $this->updateStr("$name=($name-$value)");
+    return $this;
+  }
+
+  public function increment($name,int $value=1)
+  {
+    $this->updateStr("$name=($name+$value)");
+    return $this;
+  }
+
+  public function execute()
+  {
+    $query=$this->getSql();
+    $this->db->execute($query,$this->arr_params);
+  }
 
   public function getTableName()
   {
@@ -1031,6 +1074,27 @@ class queryBuilder{
     return $this;
   }
 
+  public function count($name='*')
+  {
+    $res= $this->select("count($name) as count")->first();
+    return $this->getAutoOb($res,'count');
+  }
+
+  public function sum($name)
+  {
+    $res= $this->select("sum($name) as sum")->first();
+    return $this->getAutoOb($res,'sum');
+  }
+
+  function getAutoOb($ob,$name)
+  {
+    if ($this->db->config['result_stdClass']) {
+      return $ob->$name;
+    }
+    else {
+      return $ob[$name];
+    }
+  }
   public function find(int $id)
   {
     return $this->where('id',$id)->first();
@@ -1042,7 +1106,7 @@ class queryBuilder{
     $query= $this->getSql();
     return $this->db->execute($query,$this->arr_params,true);
   }
-  
+
   public function first()
   {
     $this->selectInit(true,true,true);
