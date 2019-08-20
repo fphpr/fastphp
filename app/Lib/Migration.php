@@ -120,7 +120,7 @@ class Migration{
 
   public static function getFiles()
   {
-     return json_decode(File::readfile(Migration::getPath().'/files.json'),true);
+     return json_decode(File::getContent(Migration::getPath().'/files.json'),true);
   }
 
   public static function wrFile($name,$text)

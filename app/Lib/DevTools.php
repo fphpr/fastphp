@@ -13,12 +13,12 @@ class DevTools{
 
   public function readIndex()
   {
-    return File::readFile('index.php');
+    return File::getContent('index.php');
   }
 
   public function readConfig()
   {
-    return File::readFile(root_path('/Config/core.php'));
+    return File::getContent(root_path('/Config/core.php'));
   }
 
   public function changeValueIndex($content,$newContent)

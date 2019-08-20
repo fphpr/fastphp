@@ -87,7 +87,7 @@ class dev_toolsController
       $files=File::getFiles(root_path('/Other/logs/'));
       $name=$files[count($files)-1];
     }
-    $text= File::readFile(root_path('/Other/logs/').$name);
+    $text= File::getContent(root_path('/Other/logs/').$name);
     return DevTools::view('log_show',['text'=>$text]);
   }
 
