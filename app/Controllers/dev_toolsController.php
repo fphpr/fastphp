@@ -77,17 +77,17 @@ class dev_toolsController
 
   public function logsAction()
   {
-    $files=File::getFiles(root_path('/Other/logs/'));
+    $files=File::getFiles(app_path('/Other/logs/'));
     return DevTools::view('logs',['files'=>$files]);
   }
   public function log_showAction()
   {
     $name=UrlParams()[2];
     if ($name=='last') {
-      $files=File::getFiles(root_path('/Other/logs/'));
+      $files=File::getFiles(app_path('/Other/logs/'));
       $name=$files[count($files)-1];
     }
-    $text= File::getContent(root_path('/Other/logs/').$name);
+    $text= File::getContent(app_path('/Other/logs/').$name);
     return DevTools::view('log_show',['text'=>$text]);
   }
 

@@ -29,7 +29,7 @@ class Session
   public static function start()
   {
     if (Session::$session_startAppStatus==false) {
-      \session_save_path (__DIR__.'/../Other/framework/session' );
+      \session_save_path (app_path('/Other/framework/session'));
       \session_start();
       Session::$session_startAppStatus=true;
     }

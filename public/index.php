@@ -6,7 +6,7 @@
 *
 */
 
-CONST DomainName='localhost';
+CONST DomainName='';
 CONST Developer_Username='admin';
 CONST Developer_Password='123456';
 CONST Developer_Two_Token='';
@@ -312,13 +312,16 @@ function e($value='')
 
 function public_path($path='')
 {
-  return __DIR__.$path;
+  return realpath(__DIR__.$path);
 }
-function root_path($path='')
+function app_path($path='')
 {
-  return public_path().'/../app'.$path;
+  return realpath(public_path().'/../app'.$path);
 }
-
+function storage_path($path='')
+{
+  return app_path().'/Storage'.$path;
+}
 
 if(RUN_TIME && ECHO_RUN_TIME){
   echo "<br><br> Time : ".(microtime(true)-TIME_START)."<br>";

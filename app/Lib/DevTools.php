@@ -18,7 +18,7 @@ class DevTools{
 
   public function readConfig()
   {
-    return File::getContent(root_path('/Config/core.php'));
+    return File::getContent(app_path('/Config/core.php'));
   }
 
   public function changeValueIndex($content,$newContent)
@@ -166,7 +166,7 @@ class DevTools{
     $config=DevTools::readConfig();
 
     $config=str_replace($end_id," $str \n \t\t\t$end_id",$config);
-    File::putContent(root_path('/Config/core.php'),$config);
+    File::putContent(app_path('/Config/core.php'),$config);
     return  $config;
   }
 
@@ -185,7 +185,7 @@ class DevTools{
 
     //$config=str_replace($config,"",$config);
 
-    File::putContent(root_path('/Config/core.php'),$config);
+    File::putContent(app_path('/Config/core.php'),$config);
 
     $arr=DevTools::getDatabaseConfig();
 
@@ -193,7 +193,7 @@ class DevTools{
     if (count($arr)<1) {
       $bodyTrim=DevTools::findCode($config,$start_id,$end_id,false,false);
       $config=str_replace($bodyTrim['code'],"$start_id\n\t\t$end_id",$config);
-      File::putContent(root_path('/Config/core.php'),$config);
+      File::putContent(app_path('/Config/core.php'),$config);
     }
 
     return  $config;
@@ -240,7 +240,7 @@ class DevTools{
          }
          $new=DevTools::getPhpConfigStr('config',$edit_key, DevTools::getPhpArrayText($array));
          $core=str_replace($find['code'],$new,$core);
-         File::putContent(root_path('/Config/core.php'),$core);
+         File::putContent(app_path('/Config/core.php'),$core);
          return ['ok'=>true];
       }
     }
