@@ -312,15 +312,19 @@ function e($value='')
 
 function public_path($path='')
 {
-  return realpath(__DIR__.$path);
+  return (__DIR__.$path);
 }
 function app_path($path='')
 {
-  return realpath(public_path().'/../app'.$path);
+  return public_path('/../app'.$path);
 }
 function storage_path($path='')
 {
   return app_path().'/Storage'.$path;
+}
+function views_path($path='')
+{
+  return app_path().'/Views'.$path;
 }
 
 if(RUN_TIME && ECHO_RUN_TIME){

@@ -123,10 +123,10 @@ class FDebug{
       $showText="Oh, there's a problem";
     }
 
-    if ($codeNumber==500 && File::exist(__DIR__."/../Views/error/error.html")) {
+    if ($codeNumber==500 && File::exist(views_path('/error/error.html'))) {
       view('error/error',['msg'=>$showText."<br>".$publicText,'code'=>$codeNumber]);
     }
-    elseif ($codeNumber==404 && File::exist(__DIR__."/../Views/error/404.html")) {
+    elseif ($codeNumber==404 && File::exist(views_path('/error/404.html'))) {
       view('error/404',['msg'=>$showText."<br>".$publicText,'code'=>$codeNumber]);
     }
     else {
@@ -152,7 +152,7 @@ class FDebug{
   {
     $text=str_replace("<br>","\n",$text);
     $text.="###########################";
-    $logPath=__DIR__."/../Other/logs/".date('Y_m_d')."_error.txt";
+    $logPath=app_path("/Other/logs/".date('Y_m_d')."_error.txt");
     FDebug::wrFile($logPath,date('Y-m-d H:i:s '). $text);
   }
 
@@ -171,7 +171,7 @@ class FDebug{
     if ($run==0) {
       $run='false';
     }
-    $logPath=__DIR__."/../Other/logs/".date('Y_m_d')."_access.txt";
+    $logPath=app_path('/Other/logs/').date('Y_m_d')."_access.txt";
     if ($wrFile==false) {
       return ['ip'=>$ip,'runTime'=>$run,'url'=>$callUrl,'get'=>$get,'post'=>$post];
     }

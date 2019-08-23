@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.9 beta';
+CONST  VER='1.2.0';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -127,7 +127,7 @@ class Auth
   public static function justLogin($url='/')
   {
     if (Auth::isLogin()==false ) {
-      Redirect(url($url),true);
+      Redirect(url($url));
     }
   }
 }
