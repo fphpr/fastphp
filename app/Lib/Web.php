@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.1.8 beta';
+CONST  VER='1.2.0';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -29,7 +29,7 @@ class Session
   public static function start()
   {
     if (Session::$session_startAppStatus==false) {
-      \session_save_path (__DIR__.'/../Other/framework/session' );
+      \session_save_path (app_path('/Other/framework/session'));
       \session_start();
       Session::$session_startAppStatus=true;
     }
@@ -127,71 +127,292 @@ class Auth
   public static function justLogin($url='/')
   {
     if (Auth::isLogin()==false ) {
-      Redirect(url($url),true);
+      Redirect(url($url));
     }
   }
 }
 
 
 /**
+ *
+ */
+class FileUploader
+{
+  private $param_name='file';
+  private $info=null;
+  private $path='/';
+  private $extensions=false;
+  private $types=false;
+  private $max_size=false;
+  private $full_path;
+
+  private $errors,$error=false;
+
+  public function save()
+  {
+    $info=$this->getInfo();
+
+    //set default name
+    if ($this->name==null) {
+      $this->name=$info['file_name'];
+    }
+
+    // check max file size
+    if ($this->checkMaxSize()==false) {
+      $this->addError('size','File size is too high');
+    }
+
+    if ($this->checkExt()==false) {
+      $this->addError('extension','File extension is not valid');
+    }
+
+    if ($this->checkType()==false) {
+      $this->addError('type','File type is not valid');
+    }
+
+    if ($this->error) {
+      return $this;
+    }
+
+    // make dir if not exsits
+    if(! \is_dir($this->path)){
+      mkdir($this->path,0777, true);
+    }
+
+    $this->full_path=$this->path.'/'.$this->name;
+
+    \move_uploaded_file(
+      $info['tmp_name'],
+      $this->full_path
+    );
+
+    return $this;
+  }
+
+  public function addError($type,$msg='')
+  {
+    $this->errors[]=[
+      'type'=>$type,
+      'msg'=>$msg
+    ];
+    $this->error=true;
+  }
+
+  public function getErrors()
+  {
+    return $this->errors;
+  }
+  public function error()
+  {
+    return $this->error;
+  }
+
+  public function status()
+  {
+    if ($this->error || File::exist($this->full_path)==false) {
+      return false;
+    }
+    return true;
+  }
+
+  public function getFileName()
+  {
+    return $this->name;
+  }
+
+  public function rename($rename,$custom_ext=false)
+  {
+    if ($custom_ext==false) {
+      $this->name=$this->set_ext_to_name($rename);
+    }
+    else {
+      $this->name="$rename.$custom_ext";
+    }
+    return $this;
+  }
+
+  public function randomName()
+  {
+    $rand='f_'.rand(10000,99909).'_'.rand(10000,99999).'_'.time();
+    $this->name=$this->set_ext_to_name($rand);
+    return $this;
+  }
+
+  private function set_ext_to_name($name)
+  {
+    return "$name.".$this->getExt();
+  }
+
+  public function checkMaxSize(){
+    if($this->max_size != false  && $this->max_size < ( $this->getSize() / 1024 )){
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  public function checkExt(){
+    if($this->extensions != false && in_array($this->getExt(),$this->extensions)=== false){
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  public function checkType(){
+    if($this->types != false && in_array($this->getType(),$this->types)=== false){
+      return false;
+    }
+    else {
+      return true;
+    }
+  }
+
+  /**
+   * get file size
+   */
+  public function getSize()
+  {
+    return $this->getProp('size');
+  }
+
+  /**
+   * get extension name
+   * @return [string]
+   */
+  public function getExt()
+  {
+    return $this->getProp('ext');
+  }
+
+  /**
+   * get type name
+   * @return [string]
+   */
+  public function getType()
+  {
+    return $this->getProp('type');
+  }
+
+  /**
+   * get file property
+   * @param  [string] $name
+   * @return [array or false]
+   */
+  public function getProp($name)
+  {
+    if (isset($this->getInfo()[$name])) {
+      return $this->getInfo()[$name];
+    }
+    else {
+      return false;
+    }
+  }
+
+
+  public function toStorage($path='/')
+  {
+    return $this->path(storage_path($path));
+  }
+
+  public function path($path='/')
+  {
+    $this->path=$path;
+    return $this;
+  }
+
+  public function getPath()
+  {
+    return $this->path;
+  }
+
+  public function getFullPath()
+  {
+    return $this->full_path;
+  }
+
+
+  public function maxSize(int $size)
+  {
+    $this->max_size=$size;
+    return $this;
+  }
+
+  public function limit_ext($arr)
+  {
+    $this->extensions=$arr;
+    return $this;
+  }
+
+  public function limit_type($arr)
+  {
+    $this->types=$arr;
+    return $this;
+  }
+
+  public function param_name($name)
+  {
+    $this->param_name=$name;
+    return $this;
+  }
+
+  /**
+   * check is exsist file for upload
+   * @return [boolean]
+   */
+  public function exsist()
+  {
+    if(isset($_FILES[$this->param_name])){
+      return true;
+    }
+    else{
+       return false;
+     }
+  }
+  /**
+   * get file information
+   * @param  boolean $force [description]
+   * @return [array or false]
+   */
+  public function getInfo($force=false)
+  {
+    if ($this->info==null || $force==true) {
+      $fileName=$this->param_name;
+      $file=[];
+      if ($this->exsist()) {
+        $file['file_name']= $_FILES[$fileName]['name'];
+        $file['size'] =$_FILES[$fileName]['size'];
+        $file['tmp_name'] =$_FILES[$fileName]['tmp_name'];
+        $file['type']=$_FILES[$fileName]['type'];
+        $ext=(explode('.',strtolower($file['file_name'])));
+        $file['ext']=$ext[count($ext)-1];
+        $this->info=$file;
+      }
+      else {
+        return false;
+      }
+
+    }
+    return $this->info;
+  }
+
+}
+
+/**
 *
 */
 class File
 {
-  public static function storagePath($dir='')
+
+  public static function upload($name='file')
   {
-    return __DIR__."/../Storage/$dir";
+    $file= new FileUploader;
+    $file->getInfo();
+    return $file->param_name($name);
   }
-  public static function upload($fileName,$pathSave,$size=null,$extensions=null,$fileNameAs=null)
-  {
-    if(isset($_FILES[$fileName])){
-      $file_name = $_FILES[$fileName]['name'];
-      $file_size =$_FILES[$fileName]['size'];
-      $file_tmp =$_FILES[$fileName]['tmp_name'];
-      $file_type=$_FILES[$fileName]['type'];
-      $file_ext=(explode('.',strtolower($file_name)));
-      $file_ext=$file_ext[count($file_ext)-1];
-      //$extensions= array("jpeg","jpg","png");
 
-      if($extensions!=null && in_array($file_ext,$extensions)=== false){
-        return['ok'=>false,'code'=>100];
-      }
-
-      if($size!= null && $file_size > 1048576 * $size){
-        return['ok'=>false,'code'=>101];
-      }
-
-      if ($fileNameAs !=null) {
-        $file_name=$fileNameAs.".$file_ext";
-      }
-
-      // make dir if not exsits
-      if(! is_dir($pathSave)){
-        mkdir($pathSave,0777, true);
-      }
-
-      move_uploaded_file($file_tmp,"$pathSave/".$file_name);
-      return['ok'=>true,'name'=>$file_name];
-    }
-    else {
-      return['ok'=>false,'code'=>102];
-    }
-  }
-  public static function info($fileName='file')
-  {
-    if(isset($_FILES[$fileName])){
-      $file_name = $_FILES[$fileName]['name'];
-      $file_size =$_FILES[$fileName]['size'];
-      $file_tmp =$_FILES[$fileName]['tmp_name'];
-      $file_type=$_FILES[$fileName]['type'];
-      $file_ext=(explode('.',strtolower($file_name)));
-      $file_ext=$file_ext[count($file_ext)-1];
-      return['ok'=>true,'file_name'=>$file_name,'file_size'=>$file_size,'file_tmp'=>$file_tmp,'file_type'=>$file_type,'file_ext'=>$file_ext];
-    }
-    else {
-      return['ok'=>false];
-    }
-  }
   public static function download($name='',$path)
   {
     $file_to_download = $path."/".$name;
@@ -384,6 +605,16 @@ class DB
 
   }
 
+  public function start_transaction()
+  {
+    DB::mainDB()->start_transaction();
+  }
+
+  public function commit()
+  {
+    DB::mainDB()->commit();
+  }
+
   /**
    * get PDO Object
    * @return db
@@ -479,6 +710,16 @@ class query{
     return $this->getPDO()->lastInsertId();
   }
 
+  public function start_transaction()
+  {
+    $this->execute('START TRANSACTION;');
+  }
+
+  public function commit()
+  {
+    $this->execute('COMMIT;');
+  }
+
   public function execute($query,$params=null,$return=false){
 
     if ($params==null) {
@@ -533,7 +774,7 @@ class query{
 
   }
   public function database_path($dir=''){
-    return root_path("/Other/framework/database$dir");
+    return app_path("/Other/framework/database$dir");
   }
 
   public function backup_table($tb_name,$path=null)

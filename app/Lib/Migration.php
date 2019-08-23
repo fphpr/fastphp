@@ -115,7 +115,7 @@ class Migration{
 
   public static function getPath()
   {
-    return root_path('/Other/framework/database/migration');
+    return app_path('/Other/framework/database/migration');
   }
 
   public static function getFiles()
