@@ -39,7 +39,7 @@
     cPassword=$('#cPassword').val();
     newUsername=$('#newUsername').val();
 
-    sendPost('<?= url('/dev-tools/account/edit/username') ?>',{
+    sendPost('<?= url('dev-tools/account/edit/username') ?>',{
       cUsername:cUsername,
       cPassword:cPassword,
       newUsername:newUsername
@@ -49,7 +49,7 @@
           text:'done successfully',
         });
         setTimeout(function () {
-          window.location.href="<?=url('/dev-tools/settings') ?>";
+          window.location.href="<?=url('dev-tools/settings') ?>";
         },2000);
       }
       else {

@@ -221,7 +221,7 @@
       result_stdClass:true,
     };
     console.log(get_params);
-    sendPost('<?= url('/dev-tools/data-base/config/add') ?>',
+    sendPost('<?= url('dev-tools/data-base/config/add') ?>',
     {
       params:params,
       key:get_params.config_name
@@ -254,7 +254,7 @@
     })
   }
   function deleteConfig(key) {
-    sendPost('<?= url('/dev-tools/data-base/config/delete') ?>',{
+    sendPost('<?= url('dev-tools/data-base/config/delete') ?>',{
       key:key
     },function (get) {
       if (get.ok) {
@@ -308,7 +308,7 @@
       params['password']=get_params.password;
     }
     console.log(get_params);
-    sendPost('<?= url('/dev-tools/data-base/config/edit') ?>',
+    sendPost('<?= url('dev-tools/data-base/config/edit') ?>',
     {
       params:params,
       key:get_params.config_name,

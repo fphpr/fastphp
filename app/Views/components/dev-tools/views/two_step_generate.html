@@ -89,11 +89,11 @@
   });
 
   function gotoTwoStep() {
-    window.location.href="<?= url('/dev-tools/two-step') ?>";
+    window.location.href="<?= url('dev-tools/two-step') ?>";
   }
 
   function changeSettings(action,param,to_value) {
-    sendPost('<?= url('/dev-tools/setting-manage') ?>',{
+    sendPost('<?= url('dev-tools/setting-manage') ?>',{
       action:action,
       param:param,
       to_value:to_value
@@ -118,7 +118,7 @@
 
   function verification() {
     code=$('#input_code').val();
-    sendPost('<?= url('/dev-tools/two-step/verification') ?>?debug=fphp',{
+    sendPost('<?= url('dev-tools/two-step/verification') ?>?debug=fphp',{
       code:code,
     },function (get) {
       if (get.ok) {

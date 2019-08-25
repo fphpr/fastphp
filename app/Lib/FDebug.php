@@ -8,7 +8,7 @@ class FDebug{
 
   private static $error=null;
 
-  public function check($error=null)
+  public static function check($error=null)
   {
     if($error!=null){
       FDebug::$error=$error;
@@ -18,7 +18,7 @@ class FDebug{
   }
 
 
-  public function error_msg($error,$addText)
+  public static function error_msg($error,$addText)
   {
 
     switch ($error) {
@@ -51,7 +51,7 @@ class FDebug{
         break;
     }
   }
-  public function byCode($code='',$type='')
+  public static function byCode($code='',$type='')
   {
     $type=explode('|',$type);
     switch ($code) {
@@ -78,19 +78,19 @@ class FDebug{
     }
   }
 
-  public function code($code)
+  public static function code($code)
   {
     http_response_code($code);
   }
 
 
-  public function echo_error($addtext='',$publicText='',$codeNumber=500)
+  public static function echo_error($addtext='',$publicText='',$codeNumber=500)
   {
     $e=FDebug::$error;
 
     $showText='';
 
-    $getR=UrlParams();
+    $getR=params_url();
     $cname=$getR[0]."Controller";
     $cfunc='';
     if (count($getR)>1) {
@@ -140,7 +140,7 @@ class FDebug{
   }
 
 
-  public function wrFile($name,$text)
+  public static function wrFile($name,$text)
   {
     $mode = (!file_exists($name)) ? 'w':'a';
     $logfile = fopen($name, $mode);
@@ -148,7 +148,7 @@ class FDebug{
     fclose($logfile);
   }
 
-  public function addLogToFile($text='')
+  public static function addLogToFile($text='')
   {
     $text=str_replace("<br>","\n",$text);
     $text.="###########################";
@@ -156,7 +156,7 @@ class FDebug{
     FDebug::wrFile($logPath,date('Y-m-d H:i:s '). $text);
   }
 
-  public function accessToServer($wrFile=false)
+  public static function accessToServer($wrFile=false)
   {
     $callUrl=UrlHttp();
     $get=json_encode($_GET);
@@ -171,7 +171,7 @@ class FDebug{
     if ($run==0) {
       $run='false';
     }
-    $logPath=app_path('/Other/logs/').date('Y_m_d')."_access.txt";
+    $logPath=app_path('Other/logs/').date('Y_m_d')."_access.txt";
     if ($wrFile==false) {
       return ['ip'=>$ip,'runTime'=>$run,'url'=>$callUrl,'get'=>$get,'post'=>$post];
     }

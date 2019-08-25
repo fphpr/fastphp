@@ -5,30 +5,30 @@ use App\Web\File;
 
 class DevTools{
 
-  public function view($page,$params)
+  public static function view($page,$params)
   {
     $components_view_path="components/dev-tools/views/";
     return view($components_view_path.'panel',['page'=>"$components_view_path$page",'pageParams'=>$params]);
   }
 
-  public function readIndex()
+  public static function readIndex()
   {
     return File::getContent('index.php');
   }
 
-  public function readConfig()
+  public static function readConfig()
   {
-    return File::getContent(app_path('/Config/core.php'));
+    return File::getContent(app_path('Config/core.php'));
   }
 
-  public function changeValueIndex($content,$newContent)
+  public static function changeValueIndex($content,$newContent)
   {
     $index=DevTools::readIndex();
     $newText=str_replace($content,$newContent,$index);
     File::putContent('index.php',$newText);
     return $newText;
   }
-  public function changeStringIndex($param,$str)
+  public static function changeStringIndex($param,$str)
   {
     $index=DevTools::readIndex();
     $start_pos=strpos($index,$param);
@@ -40,7 +40,7 @@ class DevTools{
     File::putContent('index.php',$newText);
   }
 
-  public function getValueIndex($param,$index=null,$removeQuotation=false)
+  public static function getValueIndex($param,$index=null,$removeQuotation=false)
   {
     if ($index==null) {
       $index=DevTools::readIndex();
@@ -59,7 +59,7 @@ class DevTools{
 
     return $val;
   }
-  public function getValuesIndex($array,$removeQuotation=false)
+  public static function getValuesIndex($array,$removeQuotation=false)
   {
     $index=DevTools::readIndex();
     $res=[];
@@ -74,7 +74,7 @@ class DevTools{
     return $res;
   }
 
-  public function settings($action,$param,$value)
+  public static function settings($action,$param,$value)
   {
     if ($action=='check') {
 
@@ -96,7 +96,7 @@ class DevTools{
     return['ok'=>true];
   }
 
-  public function editUsername()
+  public static function editUsername()
   {
     $cUsername=post('cUsername',null);
     $cPassword=post('cPassword',null);
@@ -113,7 +113,7 @@ class DevTools{
       return['ok'=>false,'msg'=>lang('msg.error_pass')];
     }
   }
-  public function editPassword()
+  public static function editPassword()
   {
     $cUsername=post('cUsername',null);
     $cPassword=post('cPassword',null);
@@ -131,7 +131,7 @@ class DevTools{
     }
   }
 
-  public function getDatabaseConfig()
+  public static function getDatabaseConfig()
   {
     $start_id = '//start=>database-config' ;
     $end_id   = '//end=>database-config'   ;
@@ -160,17 +160,17 @@ class DevTools{
     return $arr;
   }
 
-  public function addDatabaseConfigStr($str)
+  public static function addDatabaseConfigStr($str)
   {
     $end_id   = '//end=>database-config'   ;
     $config=DevTools::readConfig();
 
     $config=str_replace($end_id," $str \n \t\t\t$end_id",$config);
-    File::putContent(app_path('/Config/core.php'),$config);
+    File::putContent(app_path('Config/core.php'),$config);
     return  $config;
   }
 
-  public function removeDatabaseConfig($key)
+  public static function removeDatabaseConfig($key)
   {
     $start_id = '//start=>database-config' ;
     $end_id   = '//end=>database-config'   ;
@@ -185,7 +185,7 @@ class DevTools{
 
     //$config=str_replace($config,"",$config);
 
-    File::putContent(app_path('/Config/core.php'),$config);
+    File::putContent(app_path('Config/core.php'),$config);
 
     $arr=DevTools::getDatabaseConfig();
 
@@ -193,18 +193,18 @@ class DevTools{
     if (count($arr)<1) {
       $bodyTrim=DevTools::findCode($config,$start_id,$end_id,false,false);
       $config=str_replace($bodyTrim['code'],"$start_id\n\t\t$end_id",$config);
-      File::putContent(app_path('/Config/core.php'),$config);
+      File::putContent(app_path('Config/core.php'),$config);
     }
 
     return  $config;
   }
 
-  public function addDatabaseConfig($main_key,$array){
+  public static function addDatabaseConfig($main_key,$array){
     $temparr=DevTools::getPhpArrayText($array);
     return DevTools::addDatabaseConfigStr(DevTools::getPhpConfigStr('config',$main_key,$temparr));
   }
 
-  public function getPhpArrayText($array)
+  public static function getPhpArrayText($array)
   {
     $temparr=[];
     foreach ($array as $key => $value) {
@@ -219,13 +219,13 @@ class DevTools{
     return implode(' , ',$temparr);
   }
 
-  public function getPhpConfigStr($name,$key,$str)
+  public static function getPhpConfigStr($name,$key,$str)
   {
     $str="".'$'."$name"."['".$key."']=[$str \n\t\t ];";
     return $str;
   }
 
-  public function editDatabaseConfig($main_key,$edit_key,$array){
+  public static function editDatabaseConfig($main_key,$edit_key,$array){
     $configs=DevTools::getDatabaseConfig();
     $core=DevTools::readConfig();
     $start_id = '//start=>database-config' ;
@@ -240,7 +240,7 @@ class DevTools{
          }
          $new=DevTools::getPhpConfigStr('config',$edit_key, DevTools::getPhpArrayText($array));
          $core=str_replace($find['code'],$new,$core);
-         File::putContent(app_path('/Config/core.php'),$core);
+         File::putContent(app_path('Config/core.php'),$core);
          return ['ok'=>true];
       }
     }
@@ -249,12 +249,12 @@ class DevTools{
 
 
 
-  public function findInsideCode($text,$start,$end,$trimAll=true,$trim=false)
+  public static function findInsideCode($text,$start,$end,$trimAll=true,$trim=false)
   {
     return DevTools::findCode($text,$start,$end,$trimAll,false,true);
   }
 
-  public function findCode($text,$start,$end,$trimAll=true,$trim=false,$inside=false)
+  public static function findCode($text,$start,$end,$trimAll=true,$trim=false,$inside=false)
   {
     $index_func_start=strpos($text,$start);
     $index_func_end=strpos($text,$end);

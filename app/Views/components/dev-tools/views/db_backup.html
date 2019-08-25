@@ -49,7 +49,7 @@
 
 <script type="text/javascript">
 function Backup() {
-  sendPost('<?=url('/dev-tools/backup-manage') ?>',{
+  sendPost('<?=url('dev-tools/backup-manage') ?>',{
     action:'new',
     db_config:$('#select_db_config').dropdown('get value'),
     cname:$('#cname').val()

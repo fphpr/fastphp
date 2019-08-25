@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.2.0';
+CONST  VER='1.2.1';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -29,7 +29,7 @@ class Session
   public static function start()
   {
     if (Session::$session_startAppStatus==false) {
-      \session_save_path (app_path('/Other/framework/session'));
+      \session_save_path (app_path('Other/framework/session'));
       \session_start();
       Session::$session_startAppStatus=true;
     }
@@ -605,12 +605,12 @@ class DB
 
   }
 
-  public function start_transaction()
+  public static function start_transaction()
   {
     DB::mainDB()->start_transaction();
   }
 
-  public function commit()
+  public static function commit()
   {
     DB::mainDB()->commit();
   }
@@ -669,7 +669,7 @@ class DB
     return DB::initOnceDB(DB::getFirstConfigKey());
   }
 
-  public function table($name)
+  public static function table($name)
   {
     $db= DB::mainDB();
     $table= new queryBuilder($name,$db);

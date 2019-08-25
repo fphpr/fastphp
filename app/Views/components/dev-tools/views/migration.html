@@ -81,7 +81,7 @@
   $('button').popup();
   function build() {
     select_db_config=$('#select_db_config').dropdown('get value');
-    sendPost('<?= url('/dev-tools/migration-manage') ?>',{
+    sendPost('<?= url('dev-tools/migration-manage') ?>',{
       type:'build',
       db_config:select_db_config
     },
@@ -100,7 +100,7 @@
   function run(ob) {
     tr=ob.closest('tr');
 
-    sendPost('<?= url('/dev-tools/migration-manage') ?>',{
+    sendPost('<?= url('dev-tools/migration-manage') ?>',{
       type:'run',
       db_config:tr.data('key'),
       time:tr.data('time'),
@@ -119,7 +119,7 @@
   });
   }
   function reset(data) {
-    sendPost('<?= url('/dev-tools/migration-manage') ?>',data,
+    sendPost('<?= url('dev-tools/migration-manage') ?>',data,
     function (get) {
       if (get.ok) {
         msg_box({
@@ -136,7 +136,7 @@
 
   function delete_files(data) {
 
-    sendPost('<?= url('/dev-tools/migration-manage') ?>',data,
+    sendPost('<?= url('dev-tools/migration-manage') ?>',data,
     function (get) {
       if (get.ok) {
         loading(true);

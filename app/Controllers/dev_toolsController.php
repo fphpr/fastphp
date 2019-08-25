@@ -13,7 +13,7 @@ class dev_toolsController
 {
 
   function __construct(){
-    $url=urlParams();
+    $url=params_url();
     //An exception url /dev-tools And /dev-tools/login
     if (count($url)>1 && $url[1]!='login' ) {
       Auth::justLogin('/dev-tools');
@@ -22,9 +22,10 @@ class dev_toolsController
 
   public function Action()
   {
+
     if (Auth::isLogin()) {
       //return DevTools::view('dashboard',[]);
-      return Redirect(url('/dev-tools/settings'));
+      return Redirect(url('dev-tools/settings'));
     }
     else {
       $two_token=DevTools::getValueIndex('Developer_Two_Token',null,true);
@@ -37,9 +38,9 @@ class dev_toolsController
   {
     $configs=DevTools::getDatabaseConfig();
     if (count($configs)<1) {
-      Redirect(url('/dev-tools/data-base/config'),303,true);
+      Redirect(url('dev-tools/data-base/config'),303,true);
     }
-    
+
     $getFirstConfigKey=DB::getFirstConfigKey();
     $migration_files= Migration::getFiles();
 
@@ -77,23 +78,23 @@ class dev_toolsController
 
   public function logsAction()
   {
-    $files=File::getFiles(app_path('/Other/logs/'));
+    $files=File::getFiles(app_path('Other/logs/'));
     return DevTools::view('logs',['files'=>$files]);
   }
   public function log_showAction()
   {
-    $name=UrlParams()[2];
+    $name=params_url()[2];
     if ($name=='last') {
-      $files=File::getFiles(app_path('/Other/logs/'));
+      $files=File::getFiles(app_path('Other/logs/'));
       $name=$files[count($files)-1];
     }
-    $text= File::getContent(app_path('/Other/logs/').$name);
+    $text= File::getContent(app_path('Other/logs/').$name);
     return DevTools::view('log_show',['text'=>$text]);
   }
 
   public function two_stepAction()
   {
-    $url=urlParams();
+    $url=params_url();
     switch ($url[2]) {
       case 'generate':
         $res=$this->two_step_generate();
@@ -143,7 +144,7 @@ class dev_toolsController
 
   public function accountAction()
   {
-    $url=urlParams();
+    $url=params_url();
     if ($url[2]=='edit') {
       $res=$this->account_edit($url);
     }
@@ -182,7 +183,7 @@ class dev_toolsController
 
   public function data_baseAction()
   {
-    $url=urlParams();
+    $url=params_url();
 
     switch ($url[2]) {
       case 'config':
@@ -221,7 +222,7 @@ class dev_toolsController
   {
     $configs= DevTools::getDatabaseConfig();
     if (count($configs)<1) {
-      Redirect(url('/dev-tools/data-base/config'),303,true);
+      Redirect(url('dev-tools/data-base/config'),303,true);
     }
     $getFirstConfigKey=DB::getFirstConfigKey();
     return DevTools::view('db_backup',['configs'=>$configs,'FirstConfigKey'=>$getFirstConfigKey]);
@@ -264,7 +265,7 @@ class dev_toolsController
   public function logoutAction()
   {
     Auth::logout('/dev-tools');
-    return Redirect(url('/dev-tools'));
+    return Redirect(url('dev-tools'));
   }
 
 }
