@@ -6,7 +6,7 @@ use App\Web\File;
 
 class Migration{
 
-  public function delete($db_key,$time)
+  public static function delete($db_key,$time)
   {
     $path=Migration::getPath();
 
@@ -115,7 +115,7 @@ class Migration{
 
   public static function getPath()
   {
-    return app_path('/Other/framework/database/migration');
+    return app_path('Other/framework/database/migration');
   }
 
   public static function getFiles()

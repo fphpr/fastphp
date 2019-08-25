@@ -7,6 +7,7 @@ use App\Web\Auth;
 class core{
   public function start(){
     // run this function befor execute controller function
+    setLang('en');
     $this->connect_database();
   }
 

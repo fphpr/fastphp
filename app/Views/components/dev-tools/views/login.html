@@ -85,7 +85,7 @@
   <script type="text/javascript">
 
   function Login() {
-    sendPost('<?= url('/dev-tools/login') ?>',{
+    sendPost('<?= url('dev-tools/login') ?>',{
       username:$('#input-username').val(),
       password:$('#input-password').val(),
       password_two:$('#input-password-two').val()

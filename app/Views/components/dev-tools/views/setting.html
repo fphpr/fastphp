@@ -29,7 +29,7 @@
     <div class="card" data-param="SUPPORT_COMPOSER" data-value="<?= getVal('params')['SUPPORT_COMPOSER'] ?>">
       <div class="content">
         <div class="header">
-          Suport Composer
+          Support Composer
         </div>
       </div>
       <div class="extra content">
@@ -116,8 +116,8 @@
       </div>
     </div>
     <div class="extra content" style="display: flex;">
-      <a href="<?= url('/dev-tools/account/edit/username') ?>" style="" class="ui mini blue button" name="button">Edit Username</a>
-      <a href="<?= url('/dev-tools/account/edit/password') ?>" style="margin-right: 0px;margin-left: auto;" class="ui mini blue button" name="button">Edit Password</a>
+      <a href="<?= url('dev-tools/account/edit/username') ?>" style="" class="ui mini blue button" name="button">Edit Username</a>
+      <a href="<?= url('dev-tools/account/edit/password') ?>" style="margin-right: 0px;margin-left: auto;" class="ui mini blue button" name="button">Edit Password</a>
     </div>
   </div>
 
@@ -185,8 +185,8 @@
           </div>
         </div>
         <div class="extra content" style="display: flex;">
-          <a href="<?= url('/dev-tools/log-show/last') ?>" style="" class="ui blue mini button" name="button">Show Last Errors</a>
-          <a href="<?= url('/dev-tools/logs') ?>" style="margin-right: 0px;margin-left: auto;" class="ui mini blue button"  name="button">Show Files</a>
+          <a href="<?= url('dev-tools/log-show/last') ?>" style="" class="ui blue mini button" name="button">Show Last Errors</a>
+          <a href="<?= url('dev-tools/logs') ?>" style="margin-right: 0px;margin-left: auto;" class="ui mini blue button"  name="button">Show Files</a>
         </div>
       </div>
 
@@ -224,7 +224,7 @@
       return;
     }
     if (ob.find('.toggle.checkbox').checkbox('is checked')) {
-      window.location.href="<?= url('/dev-tools/two-step/generate') ?>";
+      window.location.href="<?= url('dev-tools/two-step/generate') ?>";
     }
     else {
       changeSettings('string','Developer_Two_Token',"''");
@@ -232,7 +232,7 @@
   }
 
   function changeSettings(action,param,to_value) {
-    sendPost('<?= url('/dev-tools/setting-manage') ?>',{
+    sendPost('<?= url('dev-tools/setting-manage') ?>',{
       action:action,
       param:param,
       to_value:to_value

@@ -40,10 +40,6 @@ $RUN_CONFIG_CORE=true;
 */
 CONST SUPPORT_COMPOSER=false;
 
-/*
-* show execute code time
-*/
-CONST RUN_TIME=true;
 
 CONST timezone_set='false';
 
@@ -51,7 +47,10 @@ if (timezone_set !='false') {
   date_default_timezone_set(timezone_set);
 }
 
-CONST ECHO_RUN_TIME=false;
+/*
+* show execute code time
+*/
+CONST RUN_TIME=true;
 if(RUN_TIME){define("TIME_START", microtime(true));}
 
 /*
@@ -62,39 +61,39 @@ CONST INDEX='index';
 try{
   error_reporting(0);
 
-  $getR=UrlParams();
-  if($getR[0]==INDEX && count($getR)==1){$getR[]='';}
+  $getR=params_url();
+
+  if( count($getR)==1){$getR[]='';}
 
   // auto load files
 
   if (SUPPORT_COMPOSER) {
-    include_once __DIR__."/../vendor/autoload.php";
+    include_once  root_path('vendor/autoload.php');
   }
   spl_autoload_register(function($name){
     $arr=explode('\\',$name);
     $name=str_replace('\\','/',$name);
 
-    if ( $arr[0]=='Models' || $arr[0]=='Controllers') {
-      include_once  __DIR__."/../app/$name.php";
+
+    if ($arr[0]=='App') {
+      include_once app_path("Lib/$arr[1].php");
     }
-    elseif ($arr[0]=='App') {
-      include_once __DIR__."/../app/Lib/$arr[1].php";
-    }
-    elseif ($arr[0]=='package') {
-      include_once  __DIR__."/../app/Other/$name.php";
+    else{
+      include_once  app_path("$name.php");
     }
   });
 
   if($RUN_CONFIG_CORE){
-    include_once __DIR__."/../app/Config/core.php";
+    include_once app_path('Config/core.php');
     $core= new fastphp\core;
     $core->start();
   }
 
 
- $getR[0]="Controllers\\$getR[0]".Controller;
+ $getR[0]="Controllers\\$getR[0]".'Controller';
  $getR[0]=str_replace('-','_',$getR[0]);
  $controller=new $getR[0];
+
  $getR[1]=str_replace('-','_',$getR[1]);
  ReturnData($controller->{$getR[1]."Action"}());
 
@@ -190,45 +189,38 @@ function getVal($name=''){
   }
 }
 
-function PathUrl($dir = __DIR__."/../"){
-  $root = "";$dir = str_replace('\\', '/', realpath($dir));$root .=$_SERVER['HTTP_HOST'];
-  if(!empty($_SERVER['CONTEXT_PREFIX'])) {
-    $root .= $_SERVER['CONTEXT_PREFIX'];
-    $root .= substr($dir, strlen($_SERVER[ 'CONTEXT_DOCUMENT_ROOT' ]));
-  }
-  else {
-    $root .= substr($dir, strlen($_SERVER[ 'DOCUMENT_ROOT' ]));
-  }
-  $root .= '/';return $root;
+
+function base_url()
+{
+  return $_SERVER['HTTP_HOST'].substr(root_path(),strlen(doc_root()));
 }
 
-function UrlParams($rMode=false){
-  $params=PathUrl();
+function doc_root()
+{
+  return (!ctype_alnum(substr($_SERVER['DOCUMENT_ROOT'], -1)) ? substr($_SERVER['DOCUMENT_ROOT'], 0, -1) : $_SERVER['DOCUMENT_ROOT']);
+}
+
+function route_url(){
+  $base_url=base_url();
 
   $fullUrl=UrlHttp(false);
+
    if ($fullUrl!='' && strpos($fullUrl,'?') > -1 ) {
      $fullUrl=substr($fullUrl,0,strpos($fullUrl,'?'));
    }
 
-  $params=substr($fullUrl,(strlen($params)));
+  $base_route=substr($fullUrl,strlen($base_url));
 
-  if (substr($params,strlen($params)-1)=='/') {
-    $params=mb_substr($params, 0, -1);
+  if (substr($base_route,strlen($base_route)-1)=='/') {
+    $base_route=substr($base_route,0,strlen($base_route)-1);
   }
+  return $base_route;
+}
 
-  if($params==''){
-    $RootURL=substr($fullUrl,0);
-  }
-  else {
-    $RootURL=substr($fullUrl,0,(strpos($fullUrl,$params)));
-  }
-
-  $res=explode('/',(($params!='')?$params:INDEX));
-
-  if ($rMode) {
-    return['path'=>$res,'mainURL'=>$RootURL];
-  }
-  return $res;
+function params_url()
+{
+  $route=route_url();
+  return explode('/',(($route!='')?$route:INDEX));
 }
 
 function UrlHttp($htt=true){
@@ -241,24 +233,13 @@ function Htt()
   return (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) ? $_SERVER['HTTP_X_FORWARDED_PROTO'] : ((isset( $_SERVER["HTTPS"] ) && strtolower( $_SERVER["HTTPS"] ) == "on" ) ? 'https' : 'http')) . '://' ;
 }
 
-function CurrentUrlStr(){
-  $url=implode('/',UrlParams());
-  return url("/$url");
+function current_url(){
+  return url(route_url());
 }
 
-function url($value='')
+function url($path='')
 {
-  $main=UrlParams(true)['mainURL'];
-    return Htt().substr($main,0,strlen($main)-1).$value;
-}
-function res($value='/',$return=true)
-{
-  if ($return) {
-    return url($value);
-  }
-  else {
-    echo url($value);
-  }
+  return Htt().base_url()."$path";
 }
 
 function setLang($lang='en')
@@ -277,7 +258,7 @@ function lang($label='')
 
   $label=explode('.',$label);
 
-  $path= __DIR__."/../app/Other/lang/$local/".$label[0].".php";
+  $path=app_path("Other/lang/$local/".$label[0].".php");
   $lang_array=(isset($GLOBALS['lang'][$label[0]])?$GLOBALS['lang'][$label[0]]:null) ;
   if($lang_array==null && file_exists($path)){
     include_once $path;
@@ -308,25 +289,28 @@ function e($value='')
   echo htmlspecialchars($value);
 }
 
+function root_path($path='')
+{
+  return str_replace('\\','/',realpath(__DIR__.'/..').'/'.$path);
+}
 
 
 function public_path($path='')
 {
-  return (__DIR__.$path);
-}
-function app_path($path='')
-{
-  return public_path('/../app'.$path);
-}
-function storage_path($path='')
-{
-  return app_path().'/Storage'.$path;
-}
-function views_path($path='')
-{
-  return app_path().'/Views'.$path;
+  return __DIR__.$path;
 }
 
-if(RUN_TIME && ECHO_RUN_TIME){
-  echo "<br><br> Time : ".(microtime(true)-TIME_START)."<br>";
+function app_path($path='')
+{
+  return root_path('app/'.$path);
+}
+
+function storage_path($path='')
+{
+  return app_path('Storage/'.$path);
+}
+
+function views_path($path='')
+{
+  return app_path('Views/'.$path);
 }
