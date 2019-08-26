@@ -120,7 +120,42 @@ class pageController{
 
 # Database
 
-## Query Builer
+## Get Start
+
+sample for normal use query
+```php
+
+$users=DB::select('select * from users where active=?',[true]);
+
+DB::insert('insert into users (name,age,username,password) values (?,?,?,?)',
+[
+'ben',
+25,
+'ben25',
+Hash::create('123456')
+]);
+
+DB::update('...');
+DB::delete('...');
+
+
+```
+<br>
+
+### Using Multiple Database Connections
+When using multiple connections, you may access each connection via the `in` method  on the DB facade. 
+```
+//DB::in(database_config_name)
+
+$pages  = DB::in('blog')->select('select * from pages');
+$users = DB::in('site')->select('select * from users');
+
+//or in query builder
+$count=DB::in('site')->table('users')->count();
+```
+
+
+## Query Builder
 Fast Php database query builder provides a convenient, fluent interface to creating and running database queries.
 
 ```php
