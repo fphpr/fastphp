@@ -195,7 +195,7 @@ $user = DB::table('users')->find(20);
 
 ### union
 The query builder also provides a quick way to "union" two queries together. For example, you may create an initial query and use the union method to union it with a second query:
-
+```php
 $first = DB::table('users')
             ->whereNull('first_name');
 
@@ -203,7 +203,7 @@ $users = DB::table('users')
             ->whereNull('last_name')
             ->union($first)
             ->get();
-
+```
 ### count
 ```php
 // ⇒ get count users list
