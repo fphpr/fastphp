@@ -116,6 +116,10 @@ class pageController{
 }
 ```
 
+<br>
+
+# Database
+
 ## Query Builer
 Fast Php database query builder provides a convenient, fluent interface to creating and running database queries.
 
@@ -154,10 +158,27 @@ $user = DB::table('users')->find(20);
 // whereColumn / orWhereColumn
 ```
 
+### union
+The query builder also provides a quick way to "union" two queries together. For example, you may create an initial query and use the union method to union it with a second query:
+
+$first = DB::table('users')
+            ->whereNull('first_name');
+
+$users = DB::table('users')
+            ->whereNull('last_name')
+            ->union($first)
+            ->get();
+
 ### count
 ```php
 // ⇒ get count users list
 $count_users = DB::table('users')->count(); // return int
+```
+
+### sum
+```php
+// ⇒ get count users list
+$score = DB::table('users')->sum(`score`); // return int
 ```
 
 ### join / leftJoin / rightJoin
@@ -167,13 +188,19 @@ $users = DB::table('users')
             ->join('car', 'users.id=car.user_id')
             ->get();
 
-// => leftJoin
+// => left Join
 $users = DB::table('users')
             ->leftJoin('posts', 'users.id=posts.user_id')
             ->get();
 
+// right join
 $users = DB::table('users')
             ->rightJoin('posts', 'users.id=posts.user_id')
+            ->get();
+       
+  // full Join
+$users = DB::table('users')
+            ->fullJoin('posts', 'users.id=posts.user_id')
             ->get();
 ```
 
@@ -199,7 +226,7 @@ $randomUser = DB::table('users')
                 ->inRandomOrder()
                 ->first();
 ```
-#### groupBy / having
+#### groupBy / having / duplicate
 The  `groupBy`  and  `having`  methods may be used to group the query results. The  `having`method's signature is similar to that of the  `where`  method:
 
 ```php
@@ -215,6 +242,14 @@ You may pass multiple arguments to the  `groupBy`  method to group by multiple c
 $users = DB::table('users')
                 ->groupBy('first_name', 'status')
                 ->having('account_id', '>', 100)
+                ->get();
+```
+
+To find fields that contain duplicate information .
+The following code will find users whose phone numbers are duplicates
+```php
+$users = DB::table('users')
+                ->duplicate('phone', 2)
                 ->get();
 ```
 #### skip / take
@@ -233,7 +268,7 @@ $users = DB::table('users')
                 ->limit(5)
                 ->get();
 ```
-### Insert
+#### Insert
 The query builder also provides an `insert` method for inserting records into the database table. The `insert` method accepts an array of column names and values:
 ```php
 DB::table('users')->insert(
@@ -241,7 +276,7 @@ DB::table('users')->insert(
 );
 ```
 
- ## Updates
+ ### Updates
 
 In addition to inserting records into the database, the query builder can also update existing records using the  `update`  method. The  `update`  method, like the  `insert`  method, accepts an array of column and value pairs containing the columns to be updated. You may constrain the  `update`  query using  `where`  clauses:
 
@@ -267,7 +302,7 @@ DB::table('users')->decrement('votes');
 DB::table('users')->decrement('votes', 5);
 ```
 
-## Delete
+### Delete
 
 The query builder may also be used to delete records from the table via the  `delete`method. You may constrain  `delete`  statements by adding  `where`  clauses before calling the  `delete`  method:
 
