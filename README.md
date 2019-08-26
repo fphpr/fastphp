@@ -67,7 +67,7 @@ url('account/login'); // yoursite.com/account/login
 
 #### route_url / params_url
 Get route address
-For example we enter the 'http://yoursite.com/account/login' address in the browser The output will be as follows
+For example we enter the `http://yoursite.com/account/login` address in the browser The output will be as follows
 ```php
 $route=route_url();
 //output: account/login
