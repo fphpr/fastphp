@@ -1,17 +1,4 @@
 
-# Fast PHP Framework
-
-A simple and lightweight framework that gives you more speed . 
-
-<br>
-
-## Install 
-```
-composer create-project fphpr/fastphp blog
-```
-
-<br>
-
 
 # Fast PHP Framework
 
@@ -24,6 +11,7 @@ A simple and lightweight framework that gives you more speed .
 composer create-project fphpr/fastphp blog
 ```
 
+<br>
 <br>
 
 ## The Basics
@@ -351,4 +339,127 @@ If you wish to truncate the entire table, which will remove all rows and reset t
 
 ```php
 DB::table('users')->truncate();
+```
+
+<br>
+
+## File
+
+### upload
+
+```php
+<?php
+namespace Controllers;
+
+use App\Web\File;
+
+class fileController{
+
+  // yoursite.com/file/upload
+  function uploadAction(){
+   $upload=File::upload('myfile');
+  }
+}
+```
+
+#### path / toStorage
+save path file location use the `path` method
+```php
+$upload->path(public_path('imge'));
+```
+or path to storage
+```php
+$upload->toStorage('image/products');
+```
+<br>
+
+#### maxSize / limit_ext / limit_type
+
+##### maxSize(int amount)
+The `maxSize ` method is used to limit the file size
+
+```php
+$upload->maxSize(250); // limit max size 250 kb 
+
+$upload->maxSize(3 * 1023); // limit max size 3 mg
+```
+
+##### limit_ext(array of extension)
+By the `limit_ext` method we limit the file to its extension
+```php
+$upload->limit_ext(['jpg','png','gif']);
+```
+##### limit_type(array of extension)
+By the `limit_type` method we limit the file to its mime type
+```php
+$upload->limit_type(['image/jpage']);
+```
+
+#### rename / randomName
+
+#### rename(string name_file)
+The `rename` method is used to save the file with the custom name
+```php
+$uplaod->rename('my_file_name');
+
+// or change custom file extension
+$uplaod->rename('my_file_name','pngo');//my_file_name.pngo
+```
+#### randomName()
+The `randomName` method creates a unique name for the file. The name contains  10 random  number and the [time](https://www.php.net/manual/en/function.time.php) in seconds
+sample name: f_25813_38893_158593089589.png
+```php
+$upload->randomName();
+```
+
+### save
+The `save` method is used to save the file to the server
+
+```php
+$upload->save();
+```
+#### code sample
+```php
+<?php
+namespace Controllers;
+
+use App\Web\File;
+
+class fileController{
+
+  // yoursite.com/file/upload
+  function uploadAction(){
+  
+   $upload=File::upload('myfile')
+   ->limit_ext(['png','jpg'])
+   ->maxSize(1024)      //1 mg
+   ->toStorage('image') //Storage/image directory
+   ->save();            // save file
+	
+	if($upload->status()==true){
+		// Upload Is Done :)
+		return['upload'=>true,'name'=>$upload->getFileName()];
+	}
+	else{
+		// Upload Is Failed :(
+		$errors=$upload->getErrors();
+		return['upload'=>false,'errors'=>$errors];
+	}
+  }
+}
+```
+
+#### status 
+The `status` method is used to check the file upload status
+ if the upload is done correctly Return `true` Otherwise return ` false`
+ ```php
+ if($upload->status()==true){
+	 //Code ...
+ }
+```
+
+#### getErrors
+Get the array of errors
+```php
+$upload->getErrors();
 ```
