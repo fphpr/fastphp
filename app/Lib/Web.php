@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.2.1';
+CONST  VER='1.2.2';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -124,7 +124,7 @@ class Auth
     if($id==false){return false;}
     return DB::getOne("select * from $table where id=?",[$id]);
   }
-  public static function justLogin($url='/')
+  public static function justLogin($url='')
   {
     if (Auth::isLogin()==false ) {
       Redirect(url($url));
@@ -413,24 +413,26 @@ class File
     return $file->param_name($name);
   }
 
-  public static function download($name='',$path)
+  public static function download($path,$download_name=null)
   {
-    $file_to_download = $path."/".$name;
+    if ($download_name==null) {
+      $download_name=basename($path);
+    }
 
     header("Expires: 0");
     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
     header("Cache-Control: no-store, no-cache, must-revalidate");
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");  header("Content-type: application/file");
-    header('Content-length: '.filesize($file_to_download));
-    header('Content-disposition: attachment; filename='.basename($file_to_download));
-    getContent($file_to_download);
-    exit;
+    header('Content-length: '.filesize($path));
+    header('Content-disposition: attachment; filename='.$download_name);
+    readfile($path);
   }
 
-  public static function showImage($file_name,$path)
+  public static function showImage($path)
   {
-    $file_ext=(explode('.',strtolower($file_name)));
+    $name=basename($path);
+    $file_ext=(explode('.',strtolower($name)));
     $file_ext=$file_ext[count($file_ext)-1];
 
     switch( $file_ext ) {
@@ -451,12 +453,11 @@ class File
       break;
       default:
     }
-    $file_to_download = $path."/".$file_name;
 
     header('Content-type: ' . $ctype);
 
-    if (File::exist($file_to_download)) {
-      return file_get_contents($file_to_download);
+    if (File::exist($path)) {
+      return file_get_contents($path);
     }
     else {
       http_response_code(404);

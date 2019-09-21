@@ -2,7 +2,6 @@
 namespace Controllers;
 
 use App\Web\Framework;
-use App\Web\DB;
 
 class indexController
 {
@@ -20,7 +19,6 @@ class indexController
   // yoursite.com/index/hello-test
   public function hello_testAction()
   {
-
     return 'hello :)';
   }
 

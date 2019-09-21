@@ -16,7 +16,7 @@ class dev_toolsController
     $url=params_url();
     //An exception url /dev-tools And /dev-tools/login
     if (count($url)>1 && $url[1]!='login' ) {
-      Auth::justLogin('/dev-tools');
+      Auth::justLogin('dev-tools');
     }
   }
 
