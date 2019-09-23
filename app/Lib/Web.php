@@ -616,6 +616,11 @@ class DB
     DB::mainDB()->commit();
   }
 
+  public function rollback()
+  {
+    DB::mainDB()->rollback();
+  }
+  
   /**
    * get PDO Object
    * @return db
@@ -721,6 +726,11 @@ class query{
     $this->execute('COMMIT;');
   }
 
+  public function rollback()
+  {
+    $this->execute('ROLLBACK;');
+  }
+
   public function execute($query,$params=null,$return=false){
 
     if ($params==null) {
@@ -778,21 +788,7 @@ class query{
     return app_path("/Other/framework/database$dir");
   }
 
-  public function backup_table($tb_name,$path=null)
-  {
-    set_time_limit(0);
-    $date=date('Y-m-d_H_i_s');
-    $dm=date('Y_m_d');
-    $dir=$this->database_path("/backup/$dm");
-    mkdir($dir,0777, true);
-    $dir=realpath($dir);
-    $filename=$dir.'/'.$tb_name."_$date.sql";
-    $filename=str_replace('\\','/',$filename);
-
-    return $this->execute("SELECT * INTO OUTFILE '$filename' FROM $tb_name");
-  }
-
-  public function backup($name='',$path=null)
+  public function backup($savePath=null,$table=null)
   {
     set_time_limit(0);
     $date=date('Y-m-d_H_i_s');
@@ -801,22 +797,42 @@ class query{
 
     mkdir($dir,0777, true);
 
-
     $dbhost=$this->config['db_host'];
     $dbname=$this->config['db_name'];
     $dbuser=$this->config['username'];
     $dbpass=$this->config['password'];
 
-    if ($path==null) {
-      $filename=$dir.$name.$date.".sql";
+    $file_path='';
+
+
+
+    if ($table==null) {
+
+      if ($savePath==null) {
+        $savePath=$dbname.'_'.$date.".sql";
+        $file_path=$dir.$savePath;
+      }
+      else {
+        $file_path=$dir.$savePath;
+      }
+
+      $command = "mysqldump --opt -h$dbhost -u$dbuser -p$dbpass $dbname > $file_path";
     }
     else {
-      $filename=$path;
+
+      if ($savePath==null) {
+        $savePath=$dbname.'_'.$table.'_'.$date.".sql";
+        $file_path=$dir.$savePath;
+      }
+      else {
+        $file_path=$dir.$savePath;
+      }
+
+      $command = "mysqldump --opt -h$dbhost -u$dbuser -p$dbpass $dbname $table > $file_path";
     }
 
-    $command = "mysqldump --opt -h$dbhost -u$dbuser -p$dbpass $dbname > $filename";
     system($command);
-    return ['ok'=>true,'file_name'=>$filename];
+    return ['ok'=>true,'name'=>$name,'path'=>$dir];
   }
 
 }
