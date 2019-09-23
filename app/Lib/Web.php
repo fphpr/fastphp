@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.2.1';
+CONST  VER='1.2.2';
 header('x-powered-by: FastPHP Framework');
 
 class Hash{
@@ -124,7 +124,7 @@ class Auth
     if($id==false){return false;}
     return DB::getOne("select * from $table where id=?",[$id]);
   }
-  public static function justLogin($url='/')
+  public static function justLogin($url='')
   {
     if (Auth::isLogin()==false ) {
       Redirect(url($url));
@@ -413,24 +413,26 @@ class File
     return $file->param_name($name);
   }
 
-  public static function download($name='',$path)
+  public static function download($path,$download_name=null)
   {
-    $file_to_download = $path."/".$name;
+    if ($download_name==null) {
+      $download_name=basename($path);
+    }
 
     header("Expires: 0");
     header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
     header("Cache-Control: no-store, no-cache, must-revalidate");
     header("Cache-Control: post-check=0, pre-check=0", false);
     header("Pragma: no-cache");  header("Content-type: application/file");
-    header('Content-length: '.filesize($file_to_download));
-    header('Content-disposition: attachment; filename='.basename($file_to_download));
-    getContent($file_to_download);
-    exit;
+    header('Content-length: '.filesize($path));
+    header('Content-disposition: attachment; filename='.$download_name);
+    readfile($path);
   }
 
-  public static function showImage($file_name,$path)
+  public static function showImage($path)
   {
-    $file_ext=(explode('.',strtolower($file_name)));
+    $name=basename($path);
+    $file_ext=(explode('.',strtolower($name)));
     $file_ext=$file_ext[count($file_ext)-1];
 
     switch( $file_ext ) {
@@ -451,12 +453,11 @@ class File
       break;
       default:
     }
-    $file_to_download = $path."/".$file_name;
 
     header('Content-type: ' . $ctype);
 
-    if (File::exist($file_to_download)) {
-      return file_get_contents($file_to_download);
+    if (File::exist($path)) {
+      return file_get_contents($path);
     }
     else {
       http_response_code(404);
@@ -615,6 +616,11 @@ class DB
     DB::mainDB()->commit();
   }
 
+  public function rollback()
+  {
+    DB::mainDB()->rollback();
+  }
+  
   /**
    * get PDO Object
    * @return db
@@ -720,6 +726,11 @@ class query{
     $this->execute('COMMIT;');
   }
 
+  public function rollback()
+  {
+    $this->execute('ROLLBACK;');
+  }
+
   public function execute($query,$params=null,$return=false){
 
     if ($params==null) {
@@ -777,21 +788,7 @@ class query{
     return app_path("/Other/framework/database$dir");
   }
 
-  public function backup_table($tb_name,$path=null)
-  {
-    set_time_limit(0);
-    $date=date('Y-m-d_H_i_s');
-    $dm=date('Y_m_d');
-    $dir=$this->database_path("/backup/$dm");
-    mkdir($dir,0777, true);
-    $dir=realpath($dir);
-    $filename=$dir.'/'.$tb_name."_$date.sql";
-    $filename=str_replace('\\','/',$filename);
-
-    return $this->execute("SELECT * INTO OUTFILE '$filename' FROM $tb_name");
-  }
-
-  public function backup($name='',$path=null)
+  public function backup($savePath=null,$table=null)
   {
     set_time_limit(0);
     $date=date('Y-m-d_H_i_s');
@@ -800,22 +797,42 @@ class query{
 
     mkdir($dir,0777, true);
 
-
     $dbhost=$this->config['db_host'];
     $dbname=$this->config['db_name'];
     $dbuser=$this->config['username'];
     $dbpass=$this->config['password'];
 
-    if ($path==null) {
-      $filename=$dir.$name.$date.".sql";
+    $file_path='';
+
+
+
+    if ($table==null) {
+
+      if ($savePath==null) {
+        $savePath=$dbname.'_'.$date.".sql";
+        $file_path=$dir.$savePath;
+      }
+      else {
+        $file_path=$dir.$savePath;
+      }
+
+      $command = "mysqldump --opt -h$dbhost -u$dbuser -p$dbpass $dbname > $file_path";
     }
     else {
-      $filename=$path;
+
+      if ($savePath==null) {
+        $savePath=$dbname.'_'.$table.'_'.$date.".sql";
+        $file_path=$dir.$savePath;
+      }
+      else {
+        $file_path=$dir.$savePath;
+      }
+
+      $command = "mysqldump --opt -h$dbhost -u$dbuser -p$dbpass $dbname $table > $file_path";
     }
 
-    $command = "mysqldump --opt -h$dbhost -u$dbuser -p$dbpass $dbname > $filename";
     system($command);
-    return ['ok'=>true,'file_name'=>$filename];
+    return ['ok'=>true,'name'=>$name,'path'=>$dir];
   }
 
 }
