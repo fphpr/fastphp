@@ -7,8 +7,8 @@ namespace App\Web;
 * @email info@fastphpframework.com
 */
 
-CONST  VER='1.2.2';
-header('x-powered-by: FastPHP Framework');
+CONST  VER='1.2.3';
+header('x-powered-by: Fast PHP');
 
 class Hash{
   public static function create($text='')
@@ -620,7 +620,7 @@ class DB
   {
     DB::mainDB()->rollback();
   }
-  
+
   /**
    * get PDO Object
    * @return db
@@ -1169,19 +1169,55 @@ class queryBuilder{
     return $this;
   }
 
-
+  private $first_fl_able=true;
   private function whereStr($query,$fl="AND")
   {
     $this->selectInit(false,false,false,true);
     $index=$this->SelectSyntaxIndex('WHERE_STR');
 
-    if ($this->arr[$index]!=null) {
+    if ($this->arr[$index]!=null && $this->first_fl_able) {
       $this->arr[$index].=" $fl ";
     }
+    else if(! $this->first_fl_able) {
+
+      //Used for the function p
+      $this->first_fl_able=true;
+      $this->arr[$index]=str_replace('@fl',$fl ,$this->arr[$index]);
+    }
+
 
     $this->arr[$index].=$query;
   }
 
+  public function is($name)
+  {
+    $this->where($name,true);
+    return $this;
+  }
+
+  public function orIs($name)
+  {
+    $this->orWhere($name,true);
+    return $this;
+  }
+
+  /**
+  * To write code in parentheses
+  *
+  * @param function
+  * return $this
+  */
+  public function p($func)
+  {
+    $this->whereStr('@fl (','');
+    $this->first_fl_able=false;
+
+    $func($this);
+
+    $this->whereStr(')','');
+
+    return $this;
+  }
 
 
   //==================================

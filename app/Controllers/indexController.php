@@ -2,7 +2,6 @@
 namespace Controllers;
 
 use App\Web\Framework;
-use App\Web\DB;
 
 class indexController
 {
