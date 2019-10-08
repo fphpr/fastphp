@@ -48,7 +48,7 @@ class Migration{
     foreach ($tables as $key => $table) {
       //a table name
       $table_name=$table->table_name;
-      $new_table_name="t$time".'_'.$table->table_name;
+      $new_table_name="t$time".'_'.$db_config_key.'_'.$table->table_name;
 
       // get create table query
       $info= DB::in($db_config_key)->getOne('SHOW CREATE TABLE '."`$table_name`");
@@ -57,9 +57,9 @@ class Migration{
       $stdi='Create Table';
       $createQuery= str_replace("\n",' ',$info->$stdi) ;
 
-      $code_content_create='DB::execute("'.$createQuery.'");';
-      $code_content_drop="DB::execute('DROP TABLE `$table_name`');";
-      $code_content_empty="DB::execute('DELETE FROM `$table_name`');";
+      $code_content_create='DB::in("'.$db_config_key.'")->execute("'.$createQuery.'");';
+      $code_content_drop="DB::in('$db_config_key')->execute('DROP TABLE `$table_name`');";
+      $code_content_empty="DB::in('$db_config_key')->execute('DELETE FROM `$table_name`');";
 
       $code_function_create=" public static function create(){\n \t $code_content_create \n \t}";
       $code_function_drop=" public static function drop(){\n \t $code_content_drop \n \t}";
@@ -88,7 +88,6 @@ class Migration{
     $path=Migration::getPath();
     $files= Migration::getFiles();
     foreach ($files as $key => $info) {
-
       if ($info['key']==$db_key && $info['time']==$time) {
         foreach ($info['files'] as  $file) {
           include_once "$path/$file";
