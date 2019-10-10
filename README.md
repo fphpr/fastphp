@@ -1,6 +1,6 @@
 
 
-# Fast PHP Framework
+# Night Framework
 
 A simple and lightweight framework that gives you more speed . 
 
