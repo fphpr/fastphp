@@ -1,7 +1,7 @@
 {
-    "name": "fphpr/fastphp",
+    "name": "parsgit/night",
     "type": "project",
-    "description": "The Fast PHP Framework.",
+    "description": "Night Framework.",
     "keywords": [
         "framework",
         "FastPHP"
