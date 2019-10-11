@@ -8,7 +8,7 @@ A simple and lightweight framework that gives you more speed .
 
 ## Install 
 ```
-composer create-project fphpr/fastphp blog
+composer create-project parsgit/night blog
 ```
 
 <br>
@@ -35,7 +35,7 @@ app_path();    // app directory path
 storage_path(); // storage directory path
 views_path();   // views directory path
 ```
-fast php framework sample usage in path helper
+night framework sample usage in path helper
 ```php
 $app_path=app_path('Storage/text.txt');
 
@@ -144,7 +144,7 @@ $count=DB::in('site')->table('users')->count();
 
 
 ## Query Builder
-Fast Php database query builder provides a convenient, fluent interface to creating and running database queries.
+night framework database query builder provides a convenient, fluent interface to creating and running database queries.
 
 ```php
 <?php
