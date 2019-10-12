@@ -334,7 +334,7 @@ class FileUploader
   }
 
 
-  public function maxSize(int $size)
+  public function maxSize($size)
   {
     $this->max_size=$size;
     return $this;
@@ -917,13 +917,13 @@ class queryBuilder{
     $this->execute();
   }
 
-  public function decrement($name,int $value=1)
+  public function decrement($name,$value=1)
   {
     $this->updateStr("$name=($name-$value)");
     return $this;
   }
 
-  public function increment($name,int $value=1)
+  public function increment($name,$value=1)
   {
     $this->updateStr("$name=($name+$value)");
     return $this;
@@ -1269,7 +1269,7 @@ class queryBuilder{
   //=======/ limits Functions \=======
   //==================================
 
-  public function limit(int $limit1,int $limit2=null)
+  public function limit($limit1,$limit2=null)
   {
     $index=$this->SelectSyntaxIndex('LIMIT');
 
@@ -1283,20 +1283,20 @@ class queryBuilder{
     return $this;
   }
 
-  public function skip(int $skip)
+  public function skip($skip)
   {
     $this->offset($skip);
     return $this;
   }
 
-  public function offset(int $offset)
+  public function offset($offset)
   {
     $index=$this->SelectSyntaxIndex('OFFSET');
     $this->arr[$index].=" OFFSET $offset";
     return $this;
   }
 
-  public function take(int $take)
+  public function take($take)
   {
     $this->limit($take);
     return $this;
@@ -1309,7 +1309,7 @@ class queryBuilder{
     return $this;
   }
 
-  public function duplicate($name,int $count)
+  public function duplicate($name,$count)
   {
     $this->groupBy($name)->having($name,">",$count);
     return $this;
@@ -1389,7 +1389,7 @@ class queryBuilder{
       return $ob[$name];
     }
   }
-  public function find(int $id)
+  public function find($id)
   {
     return $this->where('id',$id)->first();
   }
