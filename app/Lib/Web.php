@@ -4,10 +4,10 @@ namespace App\Web;
 /*
 * Repository : https://github.com/parsgit/night
 * site : https://nightframework.com
-* @email info@https://nightframework.com
+* @email info@nightframework.com
 */
 
-CONST  VER='1.2.3';
+CONST  VER='1.2.4';
 
 
 class Hash{
