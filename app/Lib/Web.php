@@ -8,7 +8,7 @@ namespace App\Web;
 */
 
 CONST  VER='1.2.3';
-header('x-powered-by: Fast PHP');
+
 
 class Hash{
   public static function create($text='')
