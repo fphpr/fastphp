@@ -220,7 +220,11 @@
       charset:get_params.charset,
       result_stdClass:true,
     };
-    console.log(get_params);
+
+    if (params.db_name.length <1 || params.username.length <1 || params.password.length <1 || get_params.config_name.length < 1) {
+      return;
+    }
+
     sendPost('<?= url('dev-tools/data-base/config/add') ?>',
     {
       params:params,

@@ -197,6 +197,7 @@ class dev_toolsController
     # config page
     if (count($url)==3) {
       $configs= DevTools::getDatabaseConfig();
+
       return DevTools::view('db_config',['configs'=>$configs,'timezone'=>$timezone]);
     }
     else {
@@ -206,8 +207,7 @@ class dev_toolsController
           return['ok'=>true];
         break;
         case 'delete':
-          DevTools::removeDatabaseConfig(post('key'));
-          return['ok'=>true];
+          return DevTools::removeDatabaseConfig(post('key'));
         break;
 
         case 'edit':
