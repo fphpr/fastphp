@@ -7,7 +7,7 @@ namespace App\Web;
 * @email info@nightframework.com
 */
 
-CONST  VER='1.2.5';
+CONST  VER='1.2.6';
 
 
 class Hash{

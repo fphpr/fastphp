@@ -297,7 +297,7 @@ function root_path($path='')
 
 function public_path($path='')
 {
-  return __DIR__.$path;
+  return __DIR__.'/'.$path;
 }
 
 function app_path($path='')
