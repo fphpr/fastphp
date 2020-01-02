@@ -29,7 +29,7 @@ $name = input('name','default_value_if_not_exists');
 
 ```
 
-```
+```php
 // get Requests
 $name = get('name','Default value');
 
