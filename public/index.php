@@ -126,9 +126,29 @@ function error($error=null,$byCode=null,$type=null){
 }
 
 
-function get($name='',$def=''){if (isset($_GET[$name])){return($_GET[$name]);}else{return $def;}}
-function post($name='',$def=''){if (isset($_POST[$name])){return($_POST[$name]);}else{return $def;}}
+function get($name='',$def=null){if (isset($_GET[$name])){return($_GET[$name]);}else{return $def;}}
+function post($name='',$def=null){if (isset($_POST[$name])){return($_POST[$name]);}else{return $def;}}
 
+function input($name=null,$def=null)
+{
+  if ($name==null) {
+    if ( isPost()){
+      return $_POST;
+    }
+    else if ( isGet()){
+      return $_GET;
+    }
+  }
+  if ( isPost() && isset($_POST[$name])){
+    return($_POST[$name]);
+  }
+  else if ( isGet() && isset($_GET[$name])){
+    return($_GET[$name]);
+  }
+  else{
+    return $def;
+  }
+}
 
 function LoadView($name=''){
   if( include_file( __DIR__."/../app/Views/$name.html")==false){
