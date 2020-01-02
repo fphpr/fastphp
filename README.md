@@ -18,6 +18,18 @@ composer create-project parsgit/night blog
 
 ### Input Value
 ```php
+
+// input all params
+$all = input();
+
+// sample
+$name = input('name');
+
+$name = input('name','default_value_if_not_exists');
+
+```
+
+```
 // get Requests
 $name = get('name','Default value');
 
