@@ -1,6 +1,6 @@
+![PHP Composer](https://github.com/parsgit/night/workflows/PHP%20Composer/badge.svg?event=release)
 
-
-# Night Framework
+# Night Framework  
 
 A simple and lightweight framework that gives you more speed . 
 
