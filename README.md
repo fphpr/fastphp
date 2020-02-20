@@ -1,4 +1,4 @@
-![PHP Composer](https://github.com/parsgit/night/workflows/PHP%20Composer/badge.svg?event=release)
+![PHP Composer](https://github.com/parsgit/night/workflows/PHP%20Composer/badge.svg?branch=master)
 
 # Night Framework  
 
