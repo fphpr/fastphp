@@ -911,6 +911,7 @@ class queryBuilder{
 
   public function truncate()
   {
+    $tb_name=$this->getTableName();
     $query=" TRUNCATE TABLE $tb_name ";
     $this->arr[0]=$query;
 
