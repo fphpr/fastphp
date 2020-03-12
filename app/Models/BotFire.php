@@ -117,11 +117,20 @@ class BotFire{
     elseif (isset(BotFire::$json->message->voice)) {
       return ['type'=>'voice','data'=>BotFire::$json->message->voice];
     }
+    elseif (isset(BotFire::$json->message->audio)) {
+      return ['type'=>'audio','data'=>BotFire::$json->message->audio];
+    }
     elseif (isset(BotFire::$json->message->animation)) {
       return ['type'=>'animation','data'=>BotFire::$json->message->animation];
     }
     elseif (isset(BotFire::$json->message->document)) {
       return ['type'=>'document','data'=>BotFire::$json->message->document];
+    }
+    elseif (isset(BotFire::$json->message->contact)) {
+      return ['type'=>'contact','data'=>BotFire::$json->message->contact];
+    }
+    elseif (isset(BotFire::$json->message->location)) {
+      return ['type'=>'location','data'=>BotFire::$json->message->location];
     }
     else {
       return ['type'=>false,'data'=>BotFire::$json];
@@ -799,6 +808,18 @@ class keyboard
       $this->btns[]=['text'=>$name];
     }
 
+    return $this;
+  }
+
+  public function contact($name)
+  {
+    $this->btns[]=['text'=>$name,'request_contact'=>true];
+    return $this;
+  }
+
+  public function location($name)
+  {
+    $this->btns[]=['text'=>$name,'request_location'=>true];
     return $this;
   }
 
