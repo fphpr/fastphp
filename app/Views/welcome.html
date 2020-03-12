@@ -39,6 +39,14 @@
       color: #fff !important;
       font-size: 30px;
     }
+    .webhook{
+      margin-top: 20px;
+      border-radius: 5px;
+      border-style: solid;
+      padding: 15px;
+      border-width: 1px;
+      border-color:#21ba45;
+    }
   </style>
 
 </head>
@@ -64,6 +72,16 @@
       <div class="m25p">
         <a target="_blank" href="<?= url('dev-tools') ?>" class="ui button basic blue icon"  > <i class="laptop icon" ></i> Developer Tools</a>
         <a target="_blank" href="https://nightframework.com/docs/version/1.2" class="ui button basic green"  > Document </a>
+      </div>
+
+      <div class="webhook">
+        <div class="">
+          <p> <b  style="color: orange;">Replace</b> your <b style="color: gold;" >bot token</b> in <b style="color: gold;" >robotController.php</b> before clicking set webhook</p>
+        </div>
+
+        <div class="m25p">
+          <a target="_blank" href="<?= url('robot/set-webhook') ?>" class="ui button green icon"  > Set webhook <i class="cloud upload icon" ></i> </a>
+        </div>
       </div>
 
     </div>
